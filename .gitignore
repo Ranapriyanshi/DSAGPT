@@ -1,0 +1,21 @@
+# Node
+node_modules/
+
+# Python
+*.pyc
+__pycache__/
+venv/
+
+# Database
+*.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Misc
+--yes 
