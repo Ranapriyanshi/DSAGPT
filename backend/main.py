@@ -1,5 +1,8 @@
+from dotenv import load_dotenv
+load_dotenv()
 from database import create_db_and_tables, seed_questions
 from routers import users, sentiment, gpt_chat, questions
+from routers import ai, analytics
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -23,15 +26,9 @@ app.include_router(users.router)
 app.include_router(sentiment.router)
 app.include_router(gpt_chat.router)
 app.include_router(questions.router)
+app.include_router(ai.router)
+app.include_router(analytics.router)
 
 @app.get("/")
 def read_root():
-    return {"msg": "DSA-GPT backend is running"}
-
-# Routers will be included here (gpt_chat)
-# from routers import gpt_chat
-# app.include_router(gpt_chat.router)
-
-# Routers will be included here (sentiment)
-# from routers import sentiment
-# app.include_router(sentiment.router) 
+    return {"msg": "DSA-GPT backend is running"} 
