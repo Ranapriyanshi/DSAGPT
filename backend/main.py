@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 load_dotenv()
 from database import create_db_and_tables, seed_questions
 from routers import users, sentiment, gpt_chat, questions
-from routers import ai, analytics
+from routers import ai, analytics, personalization, research
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -28,6 +28,8 @@ app.include_router(gpt_chat.router)
 app.include_router(questions.router)
 app.include_router(ai.router)
 app.include_router(analytics.router)
+app.include_router(personalization.router)
+app.include_router(research.router)
 
 @app.get("/")
 def read_root():

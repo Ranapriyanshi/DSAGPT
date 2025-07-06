@@ -6,6 +6,11 @@ import mermaid from 'mermaid';
 import ReactMarkdown from 'react-markdown';
 import EmotionAwareChat from './components/EmotionAwareChat';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
+import BookmarkManager from './components/BookmarkManager';
+import SessionControls from './components/SessionControls';
+import SpacedRepetitionManager from './components/SpacedRepetitionManager';
+import PersonalizationPanel from './components/PersonalizationPanel';
+import LearningPathManager from './components/LearningPathManager';
 
 // Define a Message type
 interface Message {
@@ -431,7 +436,7 @@ function Dashboard() {
                   <span className="mr-3 text-lg">🚀</span>
                   Quick Actions
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <Link
                     to="/chat"
                     className="group p-6 lg:p-8 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200 hover:border-blue-400 hover:from-blue-100 hover:to-blue-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
@@ -466,13 +471,57 @@ function Dashboard() {
                   </Link>
                   
                   <Link
-                    to="/questions"
+                    to="/bookmarks"
+                    className="group p-6 lg:p-8 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl border-2 border-indigo-200 hover:border-indigo-400 hover:from-indigo-100 hover:to-indigo-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🔖</div>
+                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">My Bookmarks</h3>
+                      <p className="text-xs text-gray-600">Access your saved questions and explanations</p>
+                    </div>
+                  </Link>
+                  
+                  <Link
+                    to="/spaced-repetition"
+                    className="group p-6 lg:p-8 bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl border-2 border-teal-200 hover:border-teal-400 hover:from-teal-100 hover:to-teal-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🔄</div>
+                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Spaced Repetition</h3>
+                      <p className="text-xs text-gray-600">Review topics at optimal intervals</p>
+                    </div>
+                  </Link>
+                  
+                  <Link
+                    to="/session-controls"
                     className="group p-6 lg:p-8 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl border-2 border-orange-200 hover:border-orange-400 hover:from-orange-100 hover:to-orange-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                   >
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🔧</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Code Editor</h3>
-                      <p className="text-xs text-gray-600">Practice coding with our interactive editor</p>
+                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">⚙️</div>
+                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Session Controls</h3>
+                      <p className="text-xs text-gray-600">Adjust difficulty and learning mode</p>
+                    </div>
+                  </Link>
+                  
+                  <Link
+                    to="/personalization"
+                    className="group p-6 lg:p-8 bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl border-2 border-pink-200 hover:border-pink-400 hover:from-pink-100 hover:to-pink-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🎨</div>
+                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Personalization</h3>
+                      <p className="text-xs text-gray-600">Customize your learning experience</p>
+                    </div>
+                  </Link>
+                  
+                  <Link
+                    to="/learning-path"
+                    className="group p-6 lg:p-8 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl border-2 border-emerald-200 hover:border-emerald-400 hover:from-emerald-100 hover:to-emerald-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🗺️</div>
+                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Learning Path</h3>
+                      <p className="text-xs text-gray-600">Follow your personalized roadmap</p>
                     </div>
                   </Link>
                 </div>
@@ -1785,6 +1834,41 @@ function App() {
                           >
                             Analytics
                           </Link>
+                          <Link 
+                            to="/bookmarks" 
+                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
+                            onClick={() => setShowProfileDropdown(false)}
+                          >
+                            Bookmarks
+                          </Link>
+                          <Link 
+                            to="/spaced-repetition" 
+                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
+                            onClick={() => setShowProfileDropdown(false)}
+                          >
+                            Spaced Repetition
+                          </Link>
+                          <Link 
+                            to="/session-controls" 
+                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
+                            onClick={() => setShowProfileDropdown(false)}
+                          >
+                            Session Controls
+                          </Link>
+                          <Link 
+                            to="/personalization" 
+                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
+                            onClick={() => setShowProfileDropdown(false)}
+                          >
+                            Personalization
+                          </Link>
+                          <Link 
+                            to="/learning-path" 
+                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
+                            onClick={() => setShowProfileDropdown(false)}
+                          >
+                            Learning Path
+                          </Link>
                           <hr className="my-2 border-gray-200" />
                           <button 
                             className=" text-left px-5 py-3 text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-semibold rounded mx-2"
@@ -1820,6 +1904,11 @@ function App() {
                   <Link to="/dashboard" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Dashboard</Link>
                   <Link to="/chat" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Chat</Link>
                   <Link to="/analytics" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Analytics</Link>
+                  <Link to="/bookmarks" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Bookmarks</Link>
+                  <Link to="/spaced-repetition" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Spaced Repetition</Link>
+                  <Link to="/session-controls" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Session Controls</Link>
+                  <Link to="/personalization" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Personalization</Link>
+                  <Link to="/learning-path" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Learning Path</Link>
                   <button className="py-2 w-full text-left bg-white text-blue-600 rounded font-semibold shadow hover:bg-blue-100 transition" onClick={() => { localStorage.removeItem('token'); window.location.href = '/'; }}>Logout</button>
                 </>
               ) : (
@@ -1839,6 +1928,11 @@ function App() {
             <Route path="/questions" element={isLoggedIn ? <Questions /> : <Navigate to="/" />} />
             <Route path="/questions/:id/solve" element={isLoggedIn ? <SolveQuestion /> : <Navigate to="/" />} />
             <Route path="/analytics" element={isLoggedIn ? <AnalyticsDashboard /> : <Navigate to="/" />} />
+            <Route path="/bookmarks" element={isLoggedIn ? <BookmarkManager /> : <Navigate to="/" />} />
+            <Route path="/spaced-repetition" element={isLoggedIn ? <SpacedRepetitionManager /> : <Navigate to="/" />} />
+            <Route path="/session-controls" element={isLoggedIn ? <SessionControls /> : <Navigate to="/" />} />
+            <Route path="/personalization" element={isLoggedIn ? <PersonalizationWrapper /> : <Navigate to="/" />} />
+            <Route path="/learning-path" element={isLoggedIn ? <LearningPathManager /> : <Navigate to="/" />} />
             <Route path="/" element={isLoggedIn ? <Navigate to="/dashboard" /> : <LandingPage showLoginModal={showLoginModal} setShowLoginModal={setShowLoginModal} showRegisterModal={showRegisterModal} setShowRegisterModal={setShowRegisterModal} />} />
           </Routes>
         </main>
@@ -1864,6 +1958,62 @@ function App() {
         )}
       </div>
     </Router>
+  );
+}
+
+// Personalization Wrapper Component
+function PersonalizationWrapper() {
+  const handleUpdateLearningStyle = async (style: any) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch('http://127.0.0.1:8000/personalization/learning-style', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(style)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update learning style');
+      }
+    } catch (error) {
+      console.error('Error updating learning style:', error);
+      throw error;
+    }
+  };
+
+  const handleUpdateCognitiveProfile = async (profile: any) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch('http://127.0.0.1:8000/personalization/cognitive-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(profile)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update cognitive profile');
+      }
+    } catch (error) {
+      console.error('Error updating cognitive profile:', error);
+      throw error;
+    }
+  };
+
+  return (
+    <PersonalizationPanel
+      onUpdateLearningStyle={handleUpdateLearningStyle}
+      onUpdateCognitiveProfile={handleUpdateCognitiveProfile}
+    />
   );
 }
 

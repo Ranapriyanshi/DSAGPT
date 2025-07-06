@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { marked } from 'marked';
 import ReactMarkdown from 'react-markdown';
+import VisualDSARenderer from './VisualDSARenderer';
+import BookmarkManager from './BookmarkManager';
 
 interface Message {
   sender: 'user' | 'bot';
@@ -55,6 +57,11 @@ const EmotionAwareChat: React.FC = () => {
   const [hintIndex, setHintIndex] = useState(0);
   const [quizTimer, setQuizTimer] = useState<NodeJS.Timeout | null>(null);
   const [timeRemaining, setTimeRemaining] = useState(60);
+  const [visualMode, setVisualMode] = useState(false);
+  const [currentAlgorithm, setCurrentAlgorithm] = useState<string>('');
+  const [currentCode, setCurrentCode] = useState<string>('');
+  const [userLanguage, setUserLanguage] = useState<string>('Python');
+  const [showBookmarkManager, setShowBookmarkManager] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -147,6 +154,22 @@ const EmotionAwareChat: React.FC = () => {
         timestamp: new Date()
       };
       setMessages(prev => [...prev, newBotMessage]);
+
+      // Detect algorithms and code for visual rendering
+      const algorithmKeywords = ['bubble sort', 'quick sort', 'merge sort', 'binary search', 'linear search', 'dfs', 'bfs', 'dijkstra', 'dynamic programming'];
+      const detectedAlgorithm = algorithmKeywords.find(keyword => 
+        data.response.toLowerCase().includes(keyword)
+      );
+      
+      if (detectedAlgorithm) {
+        setCurrentAlgorithm(detectedAlgorithm);
+        // Extract code blocks from response
+        const codeBlockMatch = data.response.match(/```[\s\S]*?```/);
+        if (codeBlockMatch) {
+          const code = codeBlockMatch[0].replace(/```/g, '').trim();
+          setCurrentCode(code);
+        }
+      }
 
       // Handle quiz if generated
       if (data.quiz && data.should_generate_quiz) {
@@ -368,6 +391,24 @@ const EmotionAwareChat: React.FC = () => {
                   <span>{messages.length} messages</span>
                 </div>
                 <button
+                  onClick={() => setVisualMode(!visualMode)}
+                  className={`px-4 py-2 rounded-xl transition-all duration-200 font-semibold shadow-lg ${
+                    visualMode 
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700' 
+                      : 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-700 hover:from-gray-300 hover:to-gray-400'
+                  }`}
+                  title="Toggle visual mode"
+                >
+                  {visualMode ? '📊 Visual Mode' : '👁️ Visual Mode'}
+                </button>
+                <button
+                  onClick={() => setShowBookmarkManager(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all duration-200 font-semibold shadow-lg"
+                  title="Manage bookmarks"
+                >
+                  📌 Bookmarks
+                </button>
+                <button
                   onClick={clearChat}
                   className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 font-semibold shadow-lg"
                   title="Clear chat"
@@ -440,6 +481,19 @@ const EmotionAwareChat: React.FC = () => {
           
           <div ref={chatEndRef} />
         </div>
+
+        {/* Visual DSA Renderer */}
+        {visualMode && currentAlgorithm && currentCode && (
+          <div className="p-6 bg-white/80 backdrop-blur-sm border-t border-white/20">
+            <VisualDSARenderer
+              algorithm={currentAlgorithm}
+              code={currentCode}
+              language={userLanguage}
+              stepByStep={true}
+              onStepChange={(step) => console.log('Step changed:', step)}
+            />
+          </div>
+        )}
 
         {/* Enhanced Quiz Modal */}
         {showQuiz && currentQuiz && (
@@ -588,6 +642,11 @@ const EmotionAwareChat: React.FC = () => {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Bookmark Manager */}
+        {showBookmarkManager && (
+          <BookmarkManager onClose={() => setShowBookmarkManager(false)} />
         )}
 
         {/* Input Form */}

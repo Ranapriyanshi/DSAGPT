@@ -80,3 +80,66 @@ class EmotionalTrend(SQLModel, table=True):
     emotion_category: str
     topic: Optional[str] = None
     message_count: int = 1 
+
+class LearningStyle(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    visual_preference: float = Field(default=0.5)  # 0-1 scale
+    auditory_preference: float = Field(default=0.5)
+    kinesthetic_preference: float = Field(default=0.5)
+    reading_preference: float = Field(default=0.5)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class SpacedRepetition(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    topic_id: int = Field(foreign_key="question.id")
+    difficulty_level: int = Field(default=1)  # 1-5 scale
+    next_review: datetime = Field()
+    review_count: int = Field(default=0)
+    success_rate: float = Field(default=0.0)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class CognitiveProfile(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    working_memory_capacity: float = Field(default=0.5)  # 0-1 scale
+    processing_speed: float = Field(default=0.5)
+    attention_span: float = Field(default=0.5)
+    pattern_recognition: float = Field(default=0.5)
+    logical_reasoning: float = Field(default=0.5)
+    spatial_ability: float = Field(default=0.5)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class LearningPath(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    topic_id: int = Field(foreign_key="question.id")
+    order: int = Field()
+    difficulty_adjustment: float = Field(default=0.0)  # -1 to +1
+    estimated_duration: int = Field(default=15)  # minutes
+    prerequisites: str = Field(default="")  # JSON string of prerequisite topics
+    completed: bool = Field(default=False)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Bookmark(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    question_id: Optional[int] = Field(foreign_key="question.id", default=None)
+    message_id: Optional[int] = Field(foreign_key="chatmessage.id", default=None)
+    title: str = Field()
+    description: str = Field(default="")
+    tags: str = Field(default="")  # JSON string of tags
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class SessionPause(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    session_id: int = Field(foreign_key="usersession.id")
+    pause_time: datetime = Field()
+    resume_time: Optional[datetime] = Field(default=None)
+    reason: str = Field(default="")  # User-provided reason for pause
+    created_at: datetime = Field(default_factory=datetime.utcnow) 
