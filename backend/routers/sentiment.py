@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-import json
 
 router = APIRouter(prefix="/sentiment", tags=["sentiment"])
 

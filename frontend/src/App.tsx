@@ -225,359 +225,147 @@ function Register() {
 }
 
 function Dashboard() {
+  const [activeTab, setActiveTab] = useState('chat');
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [progress, setProgress] = useState<{ attempted: number, solved: number, percent: number }>({ attempted: 0, solved: 0, percent: 0 });
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) return;
-    fetch('http://127.0.0.1:8000/users/me', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      .then(res => {
-        if (res.status === 401 || res.status === 404) {
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('http://127.0.0.1:8000/users/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const userData = await res.json();
+          setUser(userData);
+        } else {
           localStorage.removeItem('token');
           navigate('/login');
-          return Promise.reject('Unauthorized or user not found');
         }
-        return res.ok ? res.json() : Promise.reject(res);
-      })
-      .then(data => { setUser(data); setLoading(false); })
-      .catch(() => { setError('Failed to load user info'); setLoading(false); });
+      } catch (err) {
+        setError('Failed to fetch user data');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // Fetch user progress from backend
-    fetch('http://127.0.0.1:8000/questions/progress', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then(data => {
-        const attempted = Object.values(data).filter((v: any) => v.attempted).length;
-        const solved = Object.values(data).filter((v: any) => v.solved).length;
-        // Get total number of questions from backend (for all languages/difficulties)
-        fetch('http://127.0.0.1:8000/questions', { headers: { 'Authorization': `Bearer ${token}` } })
-          .then(res2 => res2.ok ? res2.json() : Promise.reject(res2))
-          .then(allQuestions => {
-            const total = allQuestions.length * 3; // 3 languages per question
-            const percent = total ? Math.round((solved / total) * 100) : 0;
-            setProgress({ attempted, solved, percent });
-          })
-          .catch(() => setProgress({ attempted, solved, percent: 0 }));
-      })
-      .catch(() => setProgress({ attempted: 0, solved: 0, percent: 0 }));
+    fetchUser();
   }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading your dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your personalized dashboard...</p>
         </div>
       </div>
     );
   }
-  
+
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center max-w-md mx-auto p-6">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">Oops! Something went wrong</h3>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
-          >
-            Try Again
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button onClick={() => window.location.reload()} className="bg-blue-600 text-white px-4 py-2 rounded-lg">
+            Retry
           </button>
         </div>
       </div>
     );
   }
-  
-  if (!user) return null;
+
+  const tabs = [
+    { id: 'chat', label: '💬 AI Tutor', icon: '💬' },
+    { id: 'analytics', label: '📊 Analytics', icon: '📊' },
+    { id: 'questions', label: '❓ Questions', icon: '❓' },
+    { id: 'bookmarks', label: '📌 Bookmarks', icon: '📌' },
+    { id: 'session-controls', label: '⚙️ Session', icon: '⚙️' },
+    { id: 'spaced-repetition', label: '🔄 Review', icon: '🔄' },
+    { id: 'personalization', label: '🎯 Personalize', icon: '🎯' },
+    { id: 'learning-path', label: '🗺️ Learning Path', icon: '🗺️' }
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute top-20 left-10 w-32 h-32 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
-      <div className="absolute top-40 right-20 w-24 h-24 bg-purple-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '1s' }}></div>
-      <div className="absolute bottom-20 left-20 w-20 h-20 bg-green-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
-      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-orange-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-      <div className="absolute bottom-1/3 right-1/4 w-28 h-28 bg-indigo-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-
-      {/* Hero Section */}
-      <div className="relative z-10">
-        <div className="bg-white/80 backdrop-blur-sm shadow-sm border-b border-white/20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-8">
-              <div>
-                <h1 className="text-xl font-bold text-gray-900 mb-2">
-                  Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">{user.name}</span>! 👋
-                </h1>
-                <p className="text-sm text-gray-600">Ready to continue your DSA learning journey?</p>
-              </div>
-              <div className="hidden md:flex items-center space-x-4">
-                <div className="text-right">
-                  <p className="text-sm text-gray-600">Current Level</p>
-                  <p className="font-semibold text-gray-900">{user.dsa_level}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-600">Language</p>
-                  <p className="font-semibold text-gray-900">{user.preferred_language}</p>
-                </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Header */}
+      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <h1 className="text-2xl font-bold text-gray-900">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                  DSA-GPT
+                </span>
+              </h1>
+              <div className="text-sm text-gray-600">
+                Welcome back, {user?.name}!
               </div>
             </div>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Stats Overview */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Overall Progress</p>
-                  <p className="text-lg font-bold text-blue-600">{progress.percent}%</p>
-                </div>
-                <div className="text-4xl">📈</div>
+            <div className="flex items-center space-x-4">
+              <div className="text-sm text-gray-600">
+                Level: {user?.dsa_level} | Language: {user?.preferred_language}
               </div>
-              <div className="mt-4">
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500 ease-out" 
-                    style={{ width: `${progress.percent}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Problems Solved</p>
-                  <p className="text-lg font-bold text-green-600">{progress.solved}</p>
-                </div>
-                <div className="text-4xl">✅</div>
-              </div>
-            </div>
-            
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Problems Attempted</p>
-                  <p className="text-lg font-bold text-purple-600">{progress.attempted}</p>
-                </div>
-                <div className="text-4xl">🎯</div>
-              </div>
-            </div>
-            
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Success Rate</p>
-                  <p className="text-lg font-bold text-orange-600">
-                    {progress.attempted > 0 ? Math.round((progress.solved / progress.attempted) * 100) : 0}%
-                  </p>
-                </div>
-                <div className="text-4xl">🏆</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* User Profile Card */}
-            <div className="lg:col-span-1 animate-slideInLeft" style={{ animationDelay: '0.5s' }}>
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20 hover:shadow-xl transition-all duration-300">
-                <h2 className="text-base font-bold mb-6 flex items-center">
-                  <span className="mr-3 text-lg">👤</span>
-                  Your Profile
-                </h2>
-                <div className="space-y-4">
-                  <div className="flex items-center p-3 bg-blue-50 rounded-lg">
-                    <span className="text-blue-600 mr-3">👤</span>
-                    <div>
-                      <p className="text-sm text-gray-600">Name</p>
-                      <p className="font-semibold text-gray-900">{user.name}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center p-3 bg-purple-50 rounded-lg">
-                    <span className="text-purple-600 mr-3">📧</span>
-                    <div>
-                      <p className="text-sm text-gray-600">Email</p>
-                      <p className="font-semibold text-gray-900">{user.email}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center p-3 bg-green-50 rounded-lg">
-                    <span className="text-green-600 mr-3">💻</span>
-                    <div>
-                      <p className="text-sm text-gray-600">Preferred Language</p>
-                      <p className="font-semibold text-gray-900">{user.preferred_language}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center p-3 bg-orange-50 rounded-lg">
-                    <span className="text-orange-600 mr-3">📚</span>
-                    <div>
-                      <p className="text-sm text-gray-600">DSA Level</p>
-                      <p className="font-semibold text-gray-900">{user.dsa_level}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="lg:col-span-2 animate-slideInRight" style={{ animationDelay: '0.6s' }}>
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20">
-                <h2 className="text-base font-bold mb-8 flex items-center">
-                  <span className="mr-3 text-lg">🚀</span>
-                  Quick Actions
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <Link
-                    to="/chat"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200 hover:border-blue-400 hover:from-blue-100 hover:to-blue-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-                  >
-                    <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">💬</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Start Chat</h3>
-                      <p className="text-xs text-gray-600">Talk to your AI tutor and get personalized help</p>
-                    </div>
-                  </Link>
-                  
-                  <Link
-                    to="/questions"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border-2 border-green-200 hover:border-green-400 hover:from-green-100 hover:to-green-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-                  >
-                    <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">📝</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Practice Problems</h3>
-                      <p className="text-xs text-gray-600">Solve DSA questions and improve your skills</p>
-                    </div>
-                  </Link>
-                  
-                  <Link
-                    to="/analytics"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border-2 border-purple-200 hover:border-purple-400 hover:from-purple-100 hover:to-purple-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-                  >
-                    <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">📊</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">View Analytics</h3>
-                      <p className="text-xs text-gray-600">Track your progress and learning insights</p>
-                    </div>
-                  </Link>
-                  
-                  <Link
-                    to="/bookmarks"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl border-2 border-indigo-200 hover:border-indigo-400 hover:from-indigo-100 hover:to-indigo-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-                  >
-                    <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🔖</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">My Bookmarks</h3>
-                      <p className="text-xs text-gray-600">Access your saved questions and explanations</p>
-                    </div>
-                  </Link>
-                  
-                  <Link
-                    to="/spaced-repetition"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl border-2 border-teal-200 hover:border-teal-400 hover:from-teal-100 hover:to-teal-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-                  >
-                    <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🔄</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Spaced Repetition</h3>
-                      <p className="text-xs text-gray-600">Review topics at optimal intervals</p>
-                    </div>
-                  </Link>
-                  
-                  <Link
-                    to="/session-controls"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl border-2 border-orange-200 hover:border-orange-400 hover:from-orange-100 hover:to-orange-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-                  >
-                    <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">⚙️</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Session Controls</h3>
-                      <p className="text-xs text-gray-600">Adjust difficulty and learning mode</p>
-                    </div>
-                  </Link>
-                  
-                  <Link
-                    to="/personalization"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl border-2 border-pink-200 hover:border-pink-400 hover:from-pink-100 hover:to-pink-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-                  >
-                    <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🎨</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Personalization</h3>
-                      <p className="text-xs text-gray-600">Customize your learning experience</p>
-                    </div>
-                  </Link>
-                  
-                  <Link
-                    to="/learning-path"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl border-2 border-emerald-200 hover:border-emerald-400 hover:from-emerald-100 hover:to-emerald-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-                  >
-                    <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🗺️</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Learning Path</h3>
-                      <p className="text-xs text-gray-600">Follow your personalized roadmap</p>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Motivational Section */}
-          <div className="mt-12 animate-fadeInUp" style={{ animationDelay: '0.8s' }}>
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
-              {/* Background decorative elements */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
-              
-              <div className="relative z-10">
-                <div className="text-center">
-                  <div className="text-3xl mb-4">🚀</div>
-                  <h2 className="text-lg font-bold mb-4">Ready to Level Up?</h2>
-                  <p className="text-sm text-blue-100 mb-6 max-w-2xl mx-auto">
-                    {progress.percent < 30 ? 
-                      "You're just getting started! Let's build a strong foundation together." :
-                      progress.percent < 70 ? 
-                      "Great progress! You're well on your way to becoming a DSA expert." :
-                      "Amazing work! You're almost there. Keep pushing forward!"
-                    }
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Link
-                      to="/questions"
-                      className="px-4 py-2 bg-white text-blue-600 rounded-xl font-semibold text-sm hover:bg-blue-50 transition-all duration-200 transform hover:scale-105 shadow-lg"
-                    >
-                      Start Practicing
-                    </Link>
-                    <Link
-                      to="/chat"
-                      className="px-4 py-2 border-2 border-white text-white rounded-xl font-semibold text-sm hover:bg-white hover:text-blue-600 transition-all duration-200"
-                    >
-                      Ask AI Tutor
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>
       </div>
-      
-      {/* Chat Icon - Fixed Position */}
-      <Link 
-        to="/chat" 
-        className="fixed top-20 right-4 z-40 p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-        </svg>
-      </Link>
+
+      {/* Navigation Tabs */}
+      <div className="bg-white/60 backdrop-blur-sm border-b border-white/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-1 overflow-x-auto">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center space-x-2 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? 'bg-blue-600 text-white shadow-lg'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                }`}
+              >
+                <span>{tab.icon}</span>
+                <span>{tab.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {activeTab === 'chat' && <EmotionAwareChat />}
+        {activeTab === 'analytics' && <AnalyticsDashboard />}
+        {activeTab === 'questions' && <Questions />}
+        {activeTab === 'bookmarks' && <BookmarkManager />}
+        {activeTab === 'session-controls' && <SessionControls />}
+        {activeTab === 'spaced-repetition' && <SpacedRepetitionManager />}
+        {activeTab === 'personalization' && (
+          <PersonalizationWrapper />
+        )}
+        {activeTab === 'learning-path' && <LearningPathManager />}
+      </div>
     </div>
   );
 }

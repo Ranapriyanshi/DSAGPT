@@ -1,10 +1,10 @@
-from fastapi import APIRouter, HTTPException, Body, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel
 import os
 import openai
 import json
 from typing import Optional, List
-from datetime import datetime, timedelta
+from datetime import datetime
 from sqlmodel import Session, select, desc
 from database import get_session
 from models import User, UserSession, ChatMessage, Quiz, EmotionalTrend
@@ -15,9 +15,11 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 openai_api_key = os.getenv("OPENAI_API_KEY")
 client = openai.OpenAI(api_key=openai_api_key)
 
+
 class ChatRequest(BaseModel):
     message: str
     topic: Optional[str] = None
+
 
 class ChatResponse(BaseModel):
     response: str
@@ -26,17 +28,19 @@ class ChatResponse(BaseModel):
     quiz: Optional[dict] = None
     should_generate_quiz: bool = False
 
+
 class QuizAnswerRequest(BaseModel):
     quiz_id: int
     selected_option: int
+
 
 def get_adaptive_prompt(user_level: str, sentiment_score: float, recent_topics: List[str], confusion_flags: List[str]) -> str:
     """
     Generate adaptive prompts based on user's emotional state and learning history
     as described in the research paper
     """
-    base_prompt = f"""You are DSA-GPT, an emotionally aware coding tutor helping users learn DSA. 
-Tailor your explanations to the user's level ({user_level}). 
+    base_prompt = f"""You are DSA-GPT, an emotionally aware coding tutor helping users learn DSA.
+Tailor your explanations to the user's level ({user_level}).
 Please keep your explanations short, interactive, and friendly."""
 
     # Adapt based on sentiment
@@ -57,16 +61,17 @@ IMPORTANT: The user seems confident and engaged. You can:
     # Adapt based on confusion history
     if confusion_flags:
         base_prompt += f"""
-Note: The user previously struggled with: {', '.join(confusion_flags)}. 
+Note: The user previously struggled with: {', '.join(confusion_flags)}.
 When explaining related concepts, provide extra scaffolding and review these topics briefly."""
 
     # Adapt based on recent topics
     if recent_topics:
         base_prompt += f"""
-Recent topics covered: {', '.join(recent_topics[-3:])}. 
+Recent topics covered: {', '.join(recent_topics[-3:])}.
 Build on this foundation and make connections to previous learning."""
 
     return base_prompt
+
 
 def generate_quiz_prompt(topic: str, user_level: str) -> str:
     """Generate a quiz question based on the current topic"""
@@ -78,6 +83,7 @@ Return ONLY a JSON object with this exact format:
     "correct_answer": 0,
     "explanation": "Brief explanation of why this is correct"
 }}"""
+
 
 def get_current_user(request: Request, session: Session = Depends(get_session)) -> User:
     """Get current user from token"""
@@ -94,6 +100,7 @@ def get_current_user(request: Request, session: Session = Depends(get_session)) 
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+
 @router.post("/message")
 async def chat_message(
     req: ChatRequest,
@@ -107,15 +114,15 @@ async def chat_message(
     try:
         # Analyze sentiment of user message
         sentiment_result = analyze_sentiment(SentimentRequest(message=req.message))
-        
+
         # Get or create active session
         active_session = session.exec(
             select(UserSession).where(
                 UserSession.user_id == current_user.id,
-                UserSession.session_end == None
+                UserSession.session_end is None
             )
         ).first()
-        
+
         if not active_session:
             active_session = UserSession(
                 user_id=current_user.id or 0,
@@ -143,15 +150,15 @@ async def chat_message(
                 ChatMessage.user_id == current_user.id
             ).order_by(desc(ChatMessage.timestamp)).limit(10)
         ).all()
-        
+
         recent_topics = list(set([msg.topic for msg in recent_messages if msg.topic]))
         confusion_flags = []
-        
+
         # Identify confusing topics based on negative sentiment
         for msg in recent_messages:
             if msg.sentiment_score < -0.3 and msg.topic:
                 confusion_flags.append(msg.topic)
-        
+
         confusion_flags = list(set(confusion_flags))
 
         # Generate adaptive prompt
@@ -181,7 +188,7 @@ async def chat_message(
             max_tokens=300,
             temperature=0.7,
         )
-        
+
         bot_response = response.choices[0].message.content
 
         # Store bot message
@@ -198,92 +205,68 @@ async def chat_message(
 
         # Decide if we should generate a quiz
         should_generate_quiz = (
-            len(recent_messages) % 3 == 0 and  # Every 3rd interaction
-            req.topic and  # Topic is specified
-            req.topic != "General DSA" and  # Topic must be specific
-            sentiment_result.sentiment > -0.2  # User is not too frustrated
+            sentiment_result.sentiment > 0.3 and
+            len(recent_messages) % 3 == 0 and
+            req.topic is not None
         )
 
-        # Debug logging
-        print(f"Quiz generation check:")
-        print(f"  - Recent messages count: {len(recent_messages)}")
-        print(f"  - Is 3rd message: {len(recent_messages) % 3 == 0}")
-        print(f"  - Topic specified: {req.topic}")
-        print(f"  - Topic is specific: {req.topic != 'General DSA' if req.topic else False}")
-        print(f"  - Sentiment score: {sentiment_result.sentiment}")
-        print(f"  - Should generate quiz: {should_generate_quiz}")
-
         quiz_data = None
-        if should_generate_quiz and req.topic:
-            print(f"Generating quiz for topic: {req.topic}")
+        if should_generate_quiz:
             try:
-                # Generate quiz
                 quiz_response = client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
-                        {"role": "user", "content": generate_quiz_prompt(req.topic, current_user.dsa_level)}
+                        {"role": "system", "content": "You are a DSA quiz generator. Generate only valid JSON."},
+                        {"role": "user", "content": generate_quiz_prompt(req.topic or "DSA", current_user.dsa_level)}
                     ],
                     max_tokens=200,
-                    temperature=0.5,
+                    temperature=0.3,
                 )
-                
-                quiz_data = json.loads(quiz_response.choices[0].message.content or "{}")
-                print(f"Quiz generated successfully: {quiz_data.get('question', 'No question')[:50]}...")
-                
-                # Store quiz
-                quiz = Quiz(
-                    session_id=active_session.id,
-                    user_id=current_user.id,
-                    question=quiz_data["question"],
-                    options=json.dumps(quiz_data["options"]),
-                    correct_answer=quiz_data["correct_answer"],
-                    topic=req.topic,
-                    difficulty=current_user.dsa_level
-                )
-                session.add(quiz)
-                session.commit()
-                session.refresh(quiz)
-                
-                quiz_data["id"] = quiz.id
-                quiz_data["explanation"] = quiz_data.get("explanation", "")
-                
-            except json.JSONDecodeError as e:
-                print(f"Quiz generation failed - JSON decode error: {e}")
-                should_generate_quiz = False
+                quiz_content = quiz_response.choices[0].message.content
+                if quiz_content:
+                    quiz_data = json.loads(quiz_content)
+                    
+                    # Store quiz in database
+                    quiz = Quiz(
+                        session_id=active_session.id,
+                        user_id=current_user.id,
+                        question=quiz_data["question"],
+                        options=json.dumps(quiz_data["options"]),
+                        correct_answer=quiz_data["correct_answer"],
+                        topic=req.topic or "DSA",
+                        difficulty=current_user.dsa_level
+                    )
+                    session.add(quiz)
+                else:
+                    should_generate_quiz = False
             except Exception as e:
-                print(f"Quiz generation failed - General error: {e}")
+                print(f"Quiz generation failed: {e}")
                 should_generate_quiz = False
 
-        # Update session statistics
-        active_session.total_messages += 1
-        active_session.average_sentiment = (
-            (active_session.average_sentiment * (active_session.total_messages - 1) + sentiment_result.sentiment) 
-            / active_session.total_messages
-        )
-        
         # Store emotional trend
         emotional_trend = EmotionalTrend(
-            user_id=current_user.id,
             session_id=active_session.id,
+            user_id=current_user.id,
             sentiment_score=sentiment_result.sentiment,
             emotion_category=sentiment_result.emotion_category,
-            topic=req.topic
+            timestamp=datetime.utcnow()
         )
         session.add(emotional_trend)
-        
+
         session.commit()
 
         return ChatResponse(
-            response=bot_response or "",
+            response=bot_response or "I'm sorry, I couldn't generate a response.",
             sentiment_score=sentiment_result.sentiment,
             emotion_category=sentiment_result.emotion_category,
             quiz=quiz_data,
-            should_generate_quiz=bool(should_generate_quiz)
+            should_generate_quiz=should_generate_quiz
         )
 
     except Exception as e:
         session.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Chat error: {str(e)}")
+
 
 @router.post("/quiz/answer")
 async def answer_quiz(
@@ -291,62 +274,33 @@ async def answer_quiz(
     current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session)
 ):
-    """Handle quiz answers and provide feedback"""
+    """Handle quiz answer submission"""
     try:
-        quiz = session.exec(
-            select(Quiz).where(
-                Quiz.id == req.quiz_id,
-                Quiz.user_id == current_user.id
-            )
-        ).first()
-        
-        if not quiz:
+        # Get the quiz
+        quiz = session.get(Quiz, req.quiz_id)
+        if not quiz or quiz.user_id != current_user.id:
             raise HTTPException(status_code=404, detail="Quiz not found")
-        
-        if quiz.user_answer is not None:
-            raise HTTPException(status_code=400, detail="Quiz already answered")
-        
+
         # Check if answer is correct
         is_correct = req.selected_option == quiz.correct_answer
-        
-        # Update quiz
+
+        # Update quiz with user's answer
         quiz.user_answer = req.selected_option
         quiz.is_correct = is_correct
         quiz.answered_at = datetime.utcnow()
-        
-        # Update chat message
-        chat_message = session.exec(
-            select(ChatMessage).where(
-                ChatMessage.session_id == quiz.session_id,
-                ChatMessage.quiz_generated == True
-            ).order_by(desc(ChatMessage.timestamp))
-        ).first()
-        
-        if chat_message:
-            chat_message.quiz_answered = True
-            chat_message.quiz_correct = is_correct
-        
+
         session.commit()
-        
-        # Generate feedback based on correctness
-        options = json.loads(quiz.options)
-        correct_answer_text = options[quiz.correct_answer]
-        user_answer_text = options[req.selected_option]
-        
-        if is_correct:
-            feedback = f"Great job! That's correct. {correct_answer_text}"
-        else:
-            feedback = f"Not quite right. The correct answer is: {correct_answer_text}. You selected: {user_answer_text}"
-        
+
         return {
-            "is_correct": is_correct,
-            "feedback": feedback,
-            "correct_answer": quiz.correct_answer,
-            "explanation": "Keep practicing!"
+            "correct": is_correct,
+            "explanation": "Keep practicing!",
+            "correct_answer": quiz.correct_answer
         }
+
     except Exception as e:
         session.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Quiz error: {str(e)}")
+
 
 @router.get("/session/{session_id}/summary")
 async def get_session_summary(
@@ -354,66 +308,66 @@ async def get_session_summary(
     current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session)
 ):
-    """Get session summary with emotional trends and performance"""
+    """Get session summary with learning analytics"""
     try:
-        user_session = session.exec(
-            select(UserSession).where(
-                UserSession.id == session_id,
-                UserSession.user_id == current_user.id
-            )
-        ).first()
-        
-        if not user_session:
+        # Get session
+        user_session = session.get(UserSession, session_id)
+        if not user_session or user_session.user_id != current_user.id:
             raise HTTPException(status_code=404, detail="Session not found")
-        
+
         # Get session messages
         messages = session.exec(
-            select(ChatMessage).where(
-                ChatMessage.session_id == session_id
-            ).order_by(desc(ChatMessage.timestamp))
+            select(ChatMessage).where(ChatMessage.session_id == session_id)
         ).all()
-        
+
+        # Get emotional trends
+        emotional_trends = session.exec(
+            select(EmotionalTrend).where(EmotionalTrend.session_id == session_id)
+        ).all()
+
         # Get quizzes
         quizzes = session.exec(
-            select(Quiz).where(
-                Quiz.session_id == session_id
-            )
+            select(Quiz).where(Quiz.session_id == session_id)
         ).all()
-        
-        # Calculate statistics
-        total_quizzes = len(quizzes)
-        correct_quizzes = len([q for q in quizzes if q.is_correct])
-        quiz_accuracy = (correct_quizzes / total_quizzes * 100) if total_quizzes > 0 else 0
-        
-        # Emotional trends
-        emotional_trends = session.exec(
-            select(EmotionalTrend).where(
-                EmotionalTrend.session_id == session_id
-            ).order_by(desc(EmotionalTrend.timestamp))
-        ).all()
-        
-        # Calculate duration
-        end_time = user_session.session_end or datetime.utcnow()
-        duration = end_time - user_session.session_start
-        duration_minutes = duration.total_seconds() / 60
-        
+
+        # Calculate metrics
+        total_messages = len(messages)
+        user_messages = [m for m in messages if m.sender == "user"]
+        bot_messages = [m for m in messages if m.sender == "bot"]
+
+        # Sentiment analysis
+        avg_sentiment = sum([m.sentiment_score for m in user_messages]) / len(user_messages) if user_messages else 0
+        positive_messages = len([m for m in user_messages if m.sentiment_score > 0.3])
+        negative_messages = len([m for m in user_messages if m.sentiment_score < -0.3])
+
+        # Quiz performance
+        answered_quizzes = [q for q in quizzes if q.user_answer is not None]
+        correct_answers = len([q for q in answered_quizzes if q.is_correct is True])
+        quiz_accuracy = correct_answers / len(answered_quizzes) if answered_quizzes else 0
+
+        # Topics covered
+        topics = list(set([m.topic for m in messages if m.topic]))
+
         return {
             "session_id": session_id,
-            "duration_minutes": duration_minutes,
-            "total_messages": user_session.total_messages,
-            "average_sentiment": user_session.average_sentiment,
+            "duration_minutes": (user_session.session_end - user_session.session_start).total_seconds() / 60 if user_session.session_end else 0,
+            "total_messages": total_messages,
+            "user_messages": len(user_messages),
+            "bot_messages": len(bot_messages),
+            "avg_sentiment": avg_sentiment,
+            "positive_messages": positive_messages,
+            "negative_messages": negative_messages,
             "quiz_accuracy": quiz_accuracy,
-            "total_quizzes": total_quizzes,
-            "correct_quizzes": correct_quizzes,
+            "topics_covered": topics,
             "emotional_trends": [
                 {
-                    "timestamp": trend.timestamp.isoformat(),
-                    "sentiment": trend.sentiment_score,
-                    "emotion": trend.emotion_category,
-                    "topic": trend.topic
+                    "timestamp": et.timestamp.isoformat(),
+                    "sentiment": et.sentiment_score,
+                    "emotion": et.emotion_category
                 }
-                for trend in emotional_trends
+                for et in emotional_trends
             ]
         }
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) 
+        raise HTTPException(status_code=500, detail=f"Summary error: {str(e)}") 
