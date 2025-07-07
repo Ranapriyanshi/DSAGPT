@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+import os
 load_dotenv()
 from database import create_db_and_tables, seed_questions
 from routers import users, sentiment, gpt_chat, questions
@@ -8,10 +9,15 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+# Get allowed origins from environment variable
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+if allowed_origins == ["*"]:
+    allowed_origins = ["*"]
+
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change to your frontend URL in production
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -6,10 +6,23 @@ from fastapi import Depends, HTTPException, Request
 from sqlmodel import Session
 from models import User
 from database import get_session
+from dotenv import load_dotenv
+import os
 
-SECRET_KEY = "supersecretkey"  # In production, use env vars
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+# Load environment variables
+load_dotenv()
+
+# Get environment variables with defaults
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY environment variable is required and must be set to a secure random string")
+
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+
+# Type assertions for the type checker
+assert SECRET_KEY is not None
+assert ALGORITHM is not None
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -33,7 +46,7 @@ def decode_access_token(token: str):
         return None
 
 def get_current_user(request: Request, session: Session = Depends(get_session)) -> User:
-    auth: str = request.headers.get("authorization")
+    auth = request.headers.get("authorization")
     if not auth or not auth.lower().startswith("bearer "):
         raise HTTPException(status_code=401, detail="Missing or invalid token")
     token = auth.split()[1]
