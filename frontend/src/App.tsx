@@ -29,6 +29,15 @@ interface Quiz {
   answer: number; // index of correct option
 }
 
+// Add prop type for Dashboard
+interface DashboardProps {
+  onOpenSessionControls?: () => void;
+  onOpenLearningPath?: () => void;
+}
+
+// At the top of App.tsx, add a type for navItems
+type NavItem = { path: string; label: string; icon: string; onClick?: () => void };
+
 function Login({ setShowLoginModal, setShowRegisterModal }: { setShowLoginModal: (show: boolean) => void; setShowRegisterModal: (show: boolean) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -62,7 +71,7 @@ function Login({ setShowLoginModal, setShowRegisterModal }: { setShowLoginModal:
       <div className="absolute top-20 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
       <div className="absolute top-40 right-20 w-16 h-16 bg-purple-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
       <div className="absolute bottom-20 left-20 w-12 h-12 bg-green-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
-      
+
       <form className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl p-4 max-w-sm w-full mx-4 border border-white/20" onSubmit={handleSubmit}>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -71,30 +80,30 @@ function Login({ setShowLoginModal, setShowRegisterModal }: { setShowLoginModal:
           </h1>
           <p className="text-gray-600">Sign in to continue your learning journey</p>
         </div>
-        
+
         {error && <div className="text-red-600 mb-4 p-3 bg-red-50 rounded-lg border border-red-200">{error}</div>}
-        
+
         <div className="space-y-4">
-          <input 
-            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-            type="email" 
-            placeholder="Email" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            required 
+          <input
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
           />
-          <input 
-            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-            type="password" 
-            placeholder="Password" 
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-            required 
+          <input
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
           />
         </div>
-        
-        <button 
-          className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 font-semibold text-lg shadow-lg" 
+
+        <button
+          className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 font-semibold text-lg shadow-lg"
           type="submit"
         >
           Sign In
@@ -148,7 +157,7 @@ function Register({ setShowLoginModal, setShowRegisterModal }: { setShowLoginMod
       <div className="absolute top-20 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
       <div className="absolute top-40 right-20 w-16 h-16 bg-purple-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
       <div className="absolute bottom-20 left-20 w-12 h-12 bg-green-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
-      
+
       <form className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl p-4 max-w-sm w-full mx-4 border border-white/20" onSubmit={handleSubmit}>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -157,47 +166,47 @@ function Register({ setShowLoginModal, setShowRegisterModal }: { setShowLoginMod
           </h1>
           <p className="text-gray-600">Start your personalized DSA learning journey</p>
         </div>
-        
+
         {error && <div className="text-red-600 mb-4 p-3 bg-red-50 rounded-lg border border-red-200">{error}</div>}
         {success && <div className="text-green-600 mb-4 p-3 bg-green-50 rounded-lg border border-green-200">{success}</div>}
-        
+
         <div className="space-y-4">
-          <input 
-            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-            type="text" 
-            placeholder="Full Name" 
-            value={name} 
-            onChange={e => setName(e.target.value)} 
-            required 
+          <input
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            type="text"
+            placeholder="Full Name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            required
           />
-          <input 
-            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-            type="email" 
-            placeholder="Email" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            required 
+          <input
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
           />
-          <input 
-            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-            type="password" 
-            placeholder="Password" 
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-            required 
+          <input
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
           />
-          <select 
-            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-            value={preferredLanguage} 
+          <select
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            value={preferredLanguage}
             onChange={e => setPreferredLanguage(e.target.value)}
           >
             <option>Python</option>
             <option>C++</option>
             <option>JavaScript</option>
           </select>
-          <select 
-            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-            value={dsaLevel} 
+          <select
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            value={dsaLevel}
             onChange={e => setDsaLevel(e.target.value)}
           >
             <option>Beginner</option>
@@ -205,9 +214,9 @@ function Register({ setShowLoginModal, setShowRegisterModal }: { setShowLoginMod
             <option>Advanced</option>
           </select>
         </div>
-        
-        <button 
-          className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 font-semibold text-lg shadow-lg" 
+
+        <button
+          className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 font-semibold text-lg shadow-lg"
           type="submit"
         >
           Register
@@ -223,7 +232,7 @@ function Register({ setShowLoginModal, setShowRegisterModal }: { setShowLoginMod
   );
 }
 
-function Dashboard() {
+function Dashboard({ onOpenSessionControls, onOpenLearningPath }: DashboardProps) {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -278,7 +287,7 @@ function Dashboard() {
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -296,7 +305,7 @@ function Dashboard() {
       </div>
     );
   }
-  
+
   if (!user) return null;
 
   return (
@@ -328,6 +337,14 @@ function Dashboard() {
                   <p className="text-sm text-gray-600">Language</p>
                   <p className="font-semibold text-gray-900">{user.preferred_language}</p>
                 </div>
+                {onOpenSessionControls && (
+                  <button
+                    onClick={onOpenSessionControls}
+                    className="ml-4 px-4 py-2 rounded-xl font-medium text-sm shadow-sm border border-blue-200 text-blue-600 bg-blue-50 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-md hover:text-blue-700 transform hover:scale-[1.02] transition-all duration-200 ease-in-out"
+                  >
+                    Session Controls
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -346,14 +363,14 @@ function Dashboard() {
               </div>
               <div className="mt-3">
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500 ease-out" 
+                  <div
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500 ease-out"
                     style={{ width: `${progress.percent}%` }}
                   ></div>
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUpBouncy" style={{ animationDelay: '0.2s' }}>
               <div className="flex items-center justify-between">
                 <div>
@@ -363,7 +380,7 @@ function Dashboard() {
                 <div className="text-3xl">✅</div>
               </div>
             </div>
-            
+
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUpBouncy" style={{ animationDelay: '0.3s' }}>
               <div className="flex items-center justify-between">
                 <div>
@@ -373,7 +390,7 @@ function Dashboard() {
                 <div className="text-3xl">🎯</div>
               </div>
             </div>
-            
+
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUpBouncy" style={{ animationDelay: '0.4s' }}>
               <div className="flex items-center justify-between">
                 <div>
@@ -446,7 +463,7 @@ function Dashboard() {
                       <p className="text-xs text-gray-600">Talk to your AI tutor and get personalized help</p>
                     </div>
                   </Link>
-                  
+
                   <Link
                     to="/questions"
                     className="group p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border-2 border-green-200 hover:border-green-400 hover:from-green-100 hover:to-green-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
@@ -457,7 +474,7 @@ function Dashboard() {
                       <p className="text-xs text-gray-600">Solve DSA questions and improve your skills</p>
                     </div>
                   </Link>
-                  
+
                   <Link
                     to="/analytics"
                     className="group p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border-2 border-purple-200 hover:border-purple-400 hover:from-purple-100 hover:to-purple-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
@@ -468,7 +485,7 @@ function Dashboard() {
                       <p className="text-xs text-gray-600">Track your progress and learning insights</p>
                     </div>
                   </Link>
-                  
+
                   <Link
                     to="/bookmarks"
                     className="group p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl border-2 border-indigo-200 hover:border-indigo-400 hover:from-indigo-100 hover:to-indigo-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
@@ -479,7 +496,7 @@ function Dashboard() {
                       <p className="text-xs text-gray-600">Access your saved questions and explanations</p>
                     </div>
                   </Link>
-                  
+
                   <Link
                     to="/spaced-repetition"
                     className="group p-4 bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl border-2 border-teal-200 hover:border-teal-400 hover:from-teal-100 hover:to-teal-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
@@ -490,18 +507,33 @@ function Dashboard() {
                       <p className="text-xs text-gray-600">Review topics at optimal intervals</p>
                     </div>
                   </Link>
-                  
-                  <Link
-                    to="/session-controls"
-                    className="group p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl border-2 border-orange-200 hover:border-orange-400 hover:from-orange-100 hover:to-orange-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-                  >
-                    <div className="text-center">
-                      <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">⚙️</div>
-                      <h3 className="text-sm font-bold text-gray-900 mb-2">Session Controls</h3>
-                      <p className="text-xs text-gray-600">Manage your learning session settings</p>
-                    </div>
-                  </Link>
-                  
+
+                  {/* Replace Session Controls Link with button if prop provided */}
+                  {onOpenSessionControls ? (
+                    <button
+                      type="button"
+                      onClick={onOpenSessionControls}
+                      className="group p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl border-2 border-orange-200 hover:border-orange-400 hover:from-orange-100 hover:to-orange-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl w-full text-left"
+                    >
+                      <div className="text-center">
+                        <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">⚙️</div>
+                        <h3 className="text-sm font-bold text-gray-900 mb-2">Session Controls</h3>
+                        <p className="text-xs text-gray-600">Manage your learning session settings</p>
+                      </div>
+                    </button>
+                  ) : (
+                    <Link
+                      to="/session-controls"
+                      className="group p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl border-2 border-orange-200 hover:border-orange-400 hover:from-orange-100 hover:to-orange-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    >
+                      <div className="text-center">
+                        <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">⚙️</div>
+                        <h3 className="text-sm font-bold text-gray-900 mb-2">Session Controls</h3>
+                        <p className="text-xs text-gray-600">Manage your learning session settings</p>
+                      </div>
+                    </Link>
+                  )}
+
                   <Link
                     to="/personalization"
                     className="group p-4 bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl border-2 border-pink-200 hover:border-pink-400 hover:from-pink-100 hover:to-pink-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
@@ -512,40 +544,41 @@ function Dashboard() {
                       <p className="text-xs text-gray-600">Customize your learning experience</p>
                     </div>
                   </Link>
-                  
-                  <Link
-                    to="/learning-path"
-                    className="group p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl border-2 border-yellow-200 hover:border-yellow-400 hover:from-yellow-100 hover:to-yellow-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+
+                  <button
+                    type="button"
+                    onClick={onOpenLearningPath}
+                    className="group p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl border-2 border-yellow-200 hover:border-yellow-400 hover:from-yellow-100 hover:to-yellow-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl w-full text-left"
                   >
                     <div className="text-center">
                       <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">🗺️</div>
                       <h3 className="text-sm font-bold text-gray-900 mb-2">Learning Path</h3>
                       <p className="text-xs text-gray-600">Follow your personalized learning journey</p>
                     </div>
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
+
         {/* Motivational Section */}
         <div className="mt-12 animate-fadeInUp" style={{ animationDelay: '0.8s' }}>
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-8 m-12 text-white relative overflow-hidden">
             {/* Background decorative elements */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
-            
+
             <div className="relative z-10">
               <div className="text-center">
                 <div className="text-3xl mb-4">🚀</div>
                 <h2 className="text-lg font-bold mb-4">Ready to Level Up?</h2>
                 <p className="text-sm text-blue-100 mb-6 max-w-lg mx-auto">
-                  {progress.percent < 30 ? 
+                  {progress.percent < 30 ?
                     "You're just getting started! Let's build a strong foundation together." :
-                    progress.percent < 70 ? 
-                    "Great progress! You're well on your way to becoming a DSA expert." :
-                    "Amazing work! You're almost there. Keep pushing forward!"
+                    progress.percent < 70 ?
+                      "Great progress! You're well on your way to becoming a DSA expert." :
+                      "Amazing work! You're almost there. Keep pushing forward!"
                   }
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -720,7 +753,7 @@ function Chat() {
   );
 }
 
-function Questions() {
+function Questions({ onOpenLearningPath }: { onOpenLearningPath?: () => void }) {
   const [difficulty, setDifficulty] = useState('basic');
   const [language, setLanguage] = useState('Python');
   const [questions, setQuestions] = useState<any[]>([]);
@@ -786,14 +819,25 @@ function Questions() {
                 <p className="text-sm text-gray-600">Master Data Structures & Algorithms with hands-on practice</p>
               </div>
               <div className="hidden md:flex items-center space-x-4">
-                <div className="text-right">
+                {onOpenLearningPath && (
+                  <button
+                    onClick={onOpenLearningPath}
+                    className="ml-4 px-4 py-2 rounded-xl font-medium text-sm shadow-sm border border-blue-200 text-blue-600 bg-blue-50
+      hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-md
+      hover:text-blue-700 transform hover:scale-[1.02] transition-all duration-200 ease-in-out"
+                  >
+                    View Personalized Learning Path
+                  </button>
+                )}
+
+                {/* <div className="text-right">
                   <p className="text-sm text-gray-600">Total Questions</p>
                   <p className="font-semibold text-gray-900">{questions.length}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-600">Current Level</p>
                   <p className="font-semibold text-gray-900">{difficulty}</p>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -809,9 +853,9 @@ function Questions() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Difficulty Level</label>
-                <select 
-                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-                  value={difficulty} 
+                <select
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+                  value={difficulty}
                   onChange={e => setDifficulty(e.target.value)}
                 >
                   <option value="basic">🌱 Basic</option>
@@ -821,9 +865,9 @@ function Questions() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Programming Language</label>
-                <select 
-                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-                  value={language} 
+                <select
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+                  value={language}
                   onChange={e => setLanguage(e.target.value)}
                 >
                   <option value="Python">🐍 Python</option>
@@ -833,9 +877,9 @@ function Questions() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
-                <select 
-                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-                  value={selectedCategory} 
+                <select
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+                  value={selectedCategory}
                   onChange={e => setSelectedCategory(e.target.value)}
                 >
                   <option value="all">📚 All Categories</option>
@@ -859,7 +903,7 @@ function Questions() {
                 </div>
               </div>
             )}
-            
+
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
                 <div className="text-red-500 text-4xl mb-4">⚠️</div>
@@ -867,7 +911,7 @@ function Questions() {
                 <p className="text-red-600">{error}</p>
               </div>
             )}
-            
+
             {!loading && !error && questions.length === 0 && (
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-8 text-center">
                 <div className="text-blue-500 text-6xl mb-4">📝</div>
@@ -875,19 +919,19 @@ function Questions() {
                 <p className="text-blue-600">Try adjusting your filters to find more questions.</p>
               </div>
             )}
-            
+
             {questions.map((q, i) => (
-              <div 
-                key={q.id || i} 
+              <div
+                key={q.id || i}
                 className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUp"
                 style={{ animationDelay: `${0.1 * i}s` }}
               >
-                                 <div className="p-6 md:p-8">
-                   <div className="flex items-start justify-between mb-4">
-                     <div className="flex-1">
-                       <h3 className="text-base md:text-lg font-bold text-gray-900 mb-3">{q.title}</h3>
-                                                <p className="hidden md:block text-gray-600 text-sm leading-relaxed mb-4">{q.description}</p>
-                     </div>
+                <div className="p-6 md:p-8">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-base md:text-lg font-bold text-gray-900 mb-3">{q.title}</h3>
+                      <p className="hidden md:block text-gray-600 text-sm leading-relaxed mb-4">{q.description}</p>
+                    </div>
                     <div className="flex flex-col items-end space-y-2 ml-4">
                       <div className={`px-4 py-2 rounded-full text-white text-sm font-semibold bg-gradient-to-r ${getDifficultyColor(q.difficulty)}`}>
                         {getDifficultyIcon(q.difficulty)} {q.difficulty}
@@ -897,26 +941,26 @@ function Questions() {
                       </div>
                     </div>
                   </div>
-                  
-                                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                     <div className="flex items-center space-x-4 text-sm text-gray-500">
-                       <span className="flex items-center">
-                         <span className="mr-1">⏱️</span>
-                         <span className="hidden sm:inline">Estimated: 15-30 min</span>
-                         <span className="sm:hidden">15-30 min</span>
-                       </span>
-                       <span className="flex items-center">
-                         <span className="mr-1">👥</span>
-                         <span className="hidden sm:inline">Popular</span>
-                       </span>
-                     </div>
-                     <button 
-                       className="w-full sm:w-auto px-4 md:px-5 py-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
-                       onClick={() => navigate(`/questions/${q.id}/solve`)}
-                     >
-                       Start Solving →
-                     </button>
-                   </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex items-center space-x-4 text-sm text-gray-500">
+                      <span className="flex items-center">
+                        <span className="mr-1">⏱️</span>
+                        <span className="hidden sm:inline">Estimated: 15-30 min</span>
+                        <span className="sm:hidden">15-30 min</span>
+                      </span>
+                      <span className="flex items-center">
+                        <span className="mr-1">👥</span>
+                        <span className="hidden sm:inline">Popular</span>
+                      </span>
+                    </div>
+                    <button
+                      className="w-full sm:w-auto px-4 md:px-5 py-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                      onClick={() => navigate(`/questions/${q.id}/solve`)}
+                    >
+                      Start Solving →
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -1162,10 +1206,10 @@ function SolveQuestion() {
           </div>
         </div>
       )}
-      
+
       {/* Chat Icon - Fixed Position */}
-      <Link 
-        to="/chat" 
+      <Link
+        to="/chat"
         className="fixed bottom-6 right-6 z-40 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-200 hover:scale-110"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1238,7 +1282,7 @@ function LoginModal({ onClose, onSuccess, setShowLoginModal, setShowRegisterModa
       <div className="absolute top-4 left-4 w-12 h-12 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
       <div className="absolute top-8 right-6 w-8 h-8 bg-purple-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
       <div className="absolute bottom-6 left-6 w-6 h-6 bg-green-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
-      
+
       {/* Close button */}
       <button
         onClick={onClose}
@@ -1248,7 +1292,7 @@ function LoginModal({ onClose, onSuccess, setShowLoginModal, setShowRegisterModa
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
-      
+
       <form onSubmit={handleSubmit}>
         <div className="text-center mb-8 mt-4">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -1257,44 +1301,44 @@ function LoginModal({ onClose, onSuccess, setShowLoginModal, setShowRegisterModa
           </h1>
           <p className="text-gray-600">Sign in to continue your learning journey</p>
         </div>
-      
-      {error && <div className="text-red-600 mb-4 p-3 bg-red-50 rounded-lg border border-red-200">{error}</div>}
-      
-      <div className="space-y-4">
-        <input 
-          className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-          type="email" 
-          name="email"
-          id="login-email"
-          placeholder="Email" 
-          value={email} 
-          onChange={e => setEmail(e.target.value)} 
-          required 
-        />
-        <input 
-          className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-          type="password" 
-          name="password"
-          id="login-password"
-          placeholder="Password" 
-          value={password} 
-          onChange={e => setPassword(e.target.value)} 
-          required 
-        />
-      </div>
-      
-      <button 
-        className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 font-semibold text-lg shadow-lg" 
-        type="submit"
-      >
-        Sign In
-      </button>
-      <p className="text-center mt-6 text-gray-600">
-        Don't have an account?{' '}
-        <button type="button" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors underline" onClick={() => { setShowLoginModal(false); setShowRegisterModal(true); }}>
-          Register
+
+        {error && <div className="text-red-600 mb-4 p-3 bg-red-50 rounded-lg border border-red-200">{error}</div>}
+
+        <div className="space-y-4">
+          <input
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            type="email"
+            name="email"
+            id="login-email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
+          <input
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            type="password"
+            name="password"
+            id="login-password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button
+          className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 font-semibold text-lg shadow-lg"
+          type="submit"
+        >
+          Sign In
         </button>
-      </p>
+        <p className="text-center mt-6 text-gray-600">
+          Don't have an account?{' '}
+          <button type="button" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors underline" onClick={() => { setShowLoginModal(false); setShowRegisterModal(true); }}>
+            Register
+          </button>
+        </p>
       </form>
     </div>
   );
@@ -1338,7 +1382,7 @@ function RegisterModal({ onClose, onSuccess, setShowLoginModal, setShowRegisterM
       <div className="absolute top-4 left-4 w-12 h-12 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
       <div className="absolute top-8 right-6 w-8 h-8 bg-purple-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
       <div className="absolute bottom-6 left-6 w-6 h-6 bg-green-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
-      
+
       {/* Close button */}
       <button
         onClick={onClose}
@@ -1348,7 +1392,7 @@ function RegisterModal({ onClose, onSuccess, setShowLoginModal, setShowRegisterM
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
-      
+
       <form onSubmit={handleSubmit}>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -1357,88 +1401,88 @@ function RegisterModal({ onClose, onSuccess, setShowLoginModal, setShowRegisterM
           </h1>
           <p className="text-gray-600">Start your personalized DSA learning journey</p>
         </div>
-      
-      {error && <div className="text-red-600 mb-4 p-3 bg-red-50 rounded-lg border border-red-200">{error}</div>}
-      {success && <div className="text-green-600 mb-4 p-3 bg-green-50 rounded-lg border border-green-200">{success}</div>}
-      
-      <div className="space-y-4">
-        <input 
-          className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-          type="text" 
-          name="name"
-          id="register-name"
-          placeholder="Full Name" 
-          value={name} 
-          onChange={e => setName(e.target.value)} 
-          required 
-        />
-        <input 
-          className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-          type="email" 
-          name="email"
-          id="register-email"
-          placeholder="Email" 
-          value={email} 
-          onChange={e => setEmail(e.target.value)} 
-          required 
-        />
-        <input 
-          className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-          type="password" 
-          name="password"
-          id="register-password"
-          placeholder="Password" 
-          value={password} 
-          onChange={e => setPassword(e.target.value)} 
-          required 
-        />
-        <select 
-          className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-          name="preferred_language"
-          id="register-preferred-language"
-          value={preferredLanguage} 
-          onChange={e => setPreferredLanguage(e.target.value)}
+
+        {error && <div className="text-red-600 mb-4 p-3 bg-red-50 rounded-lg border border-red-200">{error}</div>}
+        {success && <div className="text-green-600 mb-4 p-3 bg-green-50 rounded-lg border border-green-200">{success}</div>}
+
+        <div className="space-y-4">
+          <input
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            type="text"
+            name="name"
+            id="register-name"
+            placeholder="Full Name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            required
+          />
+          <input
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            type="email"
+            name="email"
+            id="register-email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
+          <input
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            type="password"
+            name="password"
+            id="register-password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+          />
+          <select
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            name="preferred_language"
+            id="register-preferred-language"
+            value={preferredLanguage}
+            onChange={e => setPreferredLanguage(e.target.value)}
+          >
+            <option>Python</option>
+            <option>C++</option>
+            <option>JavaScript</option>
+          </select>
+          <select
+            className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            name="dsa_level"
+            id="register-dsa-level"
+            value={dsaLevel}
+            onChange={e => setDsaLevel(e.target.value)}
+          >
+            <option>Beginner</option>
+            <option>Intermediate</option>
+            <option>Advanced</option>
+          </select>
+        </div>
+
+        <button
+          className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 font-semibold text-lg shadow-lg"
+          type="submit"
         >
-          <option>Python</option>
-          <option>C++</option>
-          <option>JavaScript</option>
-        </select>
-        <select 
-          className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
-          name="dsa_level"
-          id="register-dsa-level"
-          value={dsaLevel} 
-          onChange={e => setDsaLevel(e.target.value)}
-        >
-          <option>Beginner</option>
-          <option>Intermediate</option>
-          <option>Advanced</option>
-        </select>
-      </div>
-      
-      <button 
-        className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 font-semibold text-lg shadow-lg" 
-        type="submit"
-      >
-        Register
-      </button>
-      <p className="text-center mt-6 text-gray-600">
-        Already have an account?{' '}
-        <button type="button" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors underline" onClick={() => { setShowRegisterModal(false); setShowLoginModal(true); }}>
-          Sign In
+          Register
         </button>
-      </p>
+        <p className="text-center mt-6 text-gray-600">
+          Already have an account?{' '}
+          <button type="button" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors underline" onClick={() => { setShowRegisterModal(false); setShowLoginModal(true); }}>
+            Sign In
+          </button>
+        </p>
       </form>
     </div>
   );
 }
 
 // Landing Page Component
-function LandingPage({ 
-  showLoginModal, 
-  setShowLoginModal, 
-  showRegisterModal, 
-  setShowRegisterModal 
+function LandingPage({
+  showLoginModal,
+  setShowLoginModal,
+  showRegisterModal,
+  setShowRegisterModal
 }: {
   showLoginModal: boolean;
   setShowLoginModal: (show: boolean) => void;
@@ -1446,7 +1490,7 @@ function LandingPage({
   setShowRegisterModal: (show: boolean) => void;
 }) {
   const navigate = useNavigate();
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Hero Section */}
@@ -1461,11 +1505,11 @@ function LandingPage({
                 Emotion-Aware Tutoring
               </h1>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                DSA-GPT is an intelligent tutoring system that adapts to your emotional state, 
+                DSA-GPT is an intelligent tutoring system that adapts to your emotional state,
                 providing personalized learning experiences for Data Structures & Algorithms.
               </p>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <button
                 onClick={() => setShowRegisterModal(true)}
@@ -1480,7 +1524,7 @@ function LandingPage({
                 Sign In
               </button>
             </div>
-            
+
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
               <div className="text-center">
@@ -1498,7 +1542,7 @@ function LandingPage({
             </div>
           </div>
         </div>
-        
+
         {/* Decorative elements */}
         <div className="absolute top-20 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
         <div className="absolute top-40 right-20 w-16 h-16 bg-purple-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -1516,7 +1560,7 @@ function LandingPage({
               Our emotion-aware AI tutor provides a unique learning experience that adapts to your needs
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature 1 */}
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl hover:shadow-lg transition-all duration-200">
@@ -1526,7 +1570,7 @@ function LandingPage({
                 Our AI detects your emotional state and adapts its teaching style to keep you engaged and motivated.
               </p>
             </div>
-            
+
             {/* Feature 2 */}
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-xl hover:shadow-lg transition-all duration-200">
               <div className="text-4xl mb-4">📊</div>
@@ -1535,7 +1579,7 @@ function LandingPage({
                 Track your progress with detailed analytics, emotional trends, and personalized recommendations.
               </p>
             </div>
-            
+
             {/* Feature 3 */}
             <div className="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-xl hover:shadow-lg transition-all duration-200">
               <div className="text-4xl mb-4">🎯</div>
@@ -1544,7 +1588,7 @@ function LandingPage({
                 Test your knowledge with AI-generated quizzes that adapt to your learning level and pace.
               </p>
             </div>
-            
+
             {/* Feature 4 */}
             <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-8 rounded-xl hover:shadow-lg transition-all duration-200">
               <div className="text-4xl mb-4">💬</div>
@@ -1553,7 +1597,7 @@ function LandingPage({
                 Ask questions anytime and get instant, contextual responses from your AI tutor.
               </p>
             </div>
-            
+
             {/* Feature 5 */}
             <div className="bg-gradient-to-br from-red-50 to-red-100 p-8 rounded-xl hover:shadow-lg transition-all duration-200">
               <div className="text-4xl mb-4">🔧</div>
@@ -1562,7 +1606,7 @@ function LandingPage({
                 Learn DSA concepts in Python, C++, and JavaScript with language-specific examples.
               </p>
             </div>
-            
+
             {/* Feature 6 */}
             <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-8 rounded-xl hover:shadow-lg transition-all duration-200">
               <div className="text-4xl mb-4">📈</div>
@@ -1586,7 +1630,7 @@ function LandingPage({
               Get started with DSA-GPT in just a few simple steps
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">1</div>
@@ -1595,7 +1639,7 @@ function LandingPage({
                 Sign up with your email and set your preferred programming language and DSA level.
               </p>
             </div>
-            
+
             <div className="text-center">
               <div className="bg-purple-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Start Learning</h3>
@@ -1603,7 +1647,7 @@ function LandingPage({
                 Chat with your AI tutor, solve problems, and take interactive quizzes to test your knowledge.
               </p>
             </div>
-            
+
             <div className="text-center">
               <div className="bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Track Progress</h3>
@@ -1748,30 +1792,32 @@ function LandingPage({
 }
 
 // Active link component
-function NavLink({ item, sidebarCollapsed, onClick }: { 
-  item: { path: string; label: string; icon: string }; 
-  sidebarCollapsed: boolean; 
-  onClick: () => void;
+function NavLink({ item, sidebarCollapsed, onClick }: {
+  item: { path: string; label: string; icon: string; onClick?: () => void };
+  sidebarCollapsed: boolean;
+  onClick?: () => void;
 }) {
   const location = useLocation();
   const isActive = location.pathname === item.path;
-  
   return (
     <Link
       to={item.path}
-      className={`flex items-center px-3 py-2 rounded-lg transition-all duration-200 group ${
-        sidebarCollapsed ? 'justify-center' : 'space-x-3'
-      } ${
-        isActive 
-          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg' 
+      className={`flex items-center px-3 py-2 rounded-lg transition-all duration-200 group ${sidebarCollapsed ? 'justify-center' : 'space-x-3'
+        } ${isActive
+          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg'
           : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400'
-      }`}
-      onClick={onClick}
+        }`}
+      onClick={e => {
+        if (onClick) onClick();
+        if (item.onClick) {
+          e.preventDefault();
+          item.onClick();
+        }
+      }}
       title={sidebarCollapsed ? item.label : undefined}
     >
-      <span className={`text-lg transition-transform duration-200 ${
-        isActive ? '' : 'group-hover:scale-110'
-      }`}>
+      <span className={`text-lg transition-transform duration-200 ${isActive ? '' : 'group-hover:scale-110'
+        }`}>
         {item.icon}
       </span>
       {!sidebarCollapsed && (
@@ -1788,6 +1834,8 @@ function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [showSessionControlsModal, setShowSessionControlsModal] = useState(false);
+  const [showLearningPathModal, setShowLearningPathModal] = useState(false);
 
   // Fetch user data when logged in
   useEffect(() => {
@@ -1817,16 +1865,14 @@ function App() {
   }, [showLoginModal, showRegisterModal]);
 
   // Sidebar navigation items
-  const navItems = [
+  const navItems: NavItem[] = [
     { path: '/dashboard', label: 'Dashboard', icon: '🏠' },
     { path: '/chat', label: 'AI Tutor', icon: '💬' },
     { path: '/questions', label: 'Practice Problems', icon: '📝' },
     { path: '/analytics', label: 'Analytics', icon: '📊' },
     { path: '/bookmarks', label: 'Bookmarks', icon: '🔖' },
     { path: '/spaced-repetition', label: 'Spaced Repetition', icon: '🔄' },
-    { path: '/session-controls', label: 'Session Controls', icon: '⚙️' },
     { path: '/personalization', label: 'Personalization', icon: '🎨' },
-    { path: '/learning-path', label: 'Learning Path', icon: '🗺️' },
   ];
 
   return (
@@ -1836,11 +1882,9 @@ function App() {
           // Logged in layout with sidebar
           <div className="flex h-screen">
             {/* Sidebar */}
-            <div className={`fixed inset-y-0 left-0 z-50 h-screen bg-white dark:bg-gray-800 shadow-xl transform transition-all duration-300 ease-in-out ${
-              sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            } lg:translate-x-0 lg:static lg:inset-0 ${
-              sidebarCollapsed ? 'w-14' : 'w-56'
-            }`}>
+            <div className={`fixed inset-y-0 left-0 z-50 h-screen bg-white dark:bg-gray-800 shadow-xl transform transition-all duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+              } lg:translate-x-0 lg:static lg:inset-0 ${sidebarCollapsed ? 'w-14' : 'w-56'
+              }`}>
               <div className="flex flex-col h-full">
                 {/* Sidebar Header */}
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex flex-col w-full">
@@ -1899,7 +1943,12 @@ function App() {
                       key={item.path}
                       item={item}
                       sidebarCollapsed={sidebarCollapsed}
-                      onClick={() => setSidebarOpen(false)}
+                      onClick={() => {
+                        setSidebarOpen(false);
+                        if (item.onClick) {
+                          item.onClick();
+                        }
+                      }}
                     />
                   ))}
                 </nav>
@@ -1907,9 +1956,8 @@ function App() {
                 {/* Sidebar Footer */}
                 <div className="p-2 border-t border-gray-200 dark:border-gray-700 space-y-2">
                   {/* Theme Toggle */}
-                  <div className={`flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg w-full ${
-                    sidebarCollapsed ? 'justify-center' : 'justify-between'
-                  }`}>
+                  <div className={`flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg w-full ${sidebarCollapsed ? 'justify-center' : 'justify-between'
+                    }`}>
                     {!sidebarCollapsed && (
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Theme</span>
                     )}
@@ -1922,9 +1970,8 @@ function App() {
                       localStorage.removeItem('token');
                       window.location.href = '/';
                     }}
-                    className={`w-full flex items-center px-3 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 font-medium ${
-                      sidebarCollapsed ? 'justify-center' : 'justify-center space-x-2'
-                    }`}
+                    className={`w-full flex items-center px-3 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 font-medium ${sidebarCollapsed ? 'justify-center' : 'justify-center space-x-2'
+                      }`}
                     title={sidebarCollapsed ? "Logout" : undefined}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1967,18 +2014,24 @@ function App() {
               {/* Page Content */}
               <main className="flex-1 overflow-y-auto">
                 <Routes>
-                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/dashboard" element={<DashboardWithSessionControlsTrigger onOpenSessionControls={() => setShowSessionControlsModal(true)} onOpenLearningPath={() => setShowLearningPathModal(true)} />} />
                   <Route path="/chat" element={<EmotionAwareChat />} />
-                  <Route path="/questions" element={<Questions />} />
+                  <Route path="/questions" element={<Questions onOpenLearningPath={() => setShowLearningPathModal(true)} />} />
                   <Route path="/questions/:id/solve" element={<SolveQuestion />} />
                   <Route path="/analytics" element={<AnalyticsDashboard />} />
                   <Route path="/bookmarks" element={<BookmarkManager />} />
                   <Route path="/spaced-repetition" element={<SpacedRepetitionManager />} />
-                  <Route path="/session-controls" element={<SessionControls />} />
+                  <Route path="/session-controls" element={null} />
                   <Route path="/personalization" element={<PersonalizationWrapper />} />
-                  <Route path="/learning-path" element={<LearningPathManager />} />
+                  <Route path="/learning-path" element={<LearningPathManager onClose={() => setShowLearningPathModal(false)} />} />
                   <Route path="/" element={<Navigate to="/dashboard" />} />
                 </Routes>
+                {showSessionControlsModal && (
+                  <SessionControls onClose={() => setShowSessionControlsModal(false)} />
+                )}
+                {showLearningPathModal && (
+                  <LearningPathManager onClose={() => setShowLearningPathModal(false)} />
+                )}
               </main>
             </div>
           </div>
@@ -1999,15 +2052,15 @@ function App() {
                 <ThemeToggle />
               </div>
             </nav>
-            
+
             <main className="w-full">
               <Routes>
                 <Route path="/" element={
-                  <LandingPage 
-                    showLoginModal={showLoginModal} 
-                    setShowLoginModal={setShowLoginModal} 
-                    showRegisterModal={showRegisterModal} 
-                    setShowRegisterModal={setShowRegisterModal} 
+                  <LandingPage
+                    showLoginModal={showLoginModal}
+                    setShowLoginModal={setShowLoginModal}
+                    showRegisterModal={showRegisterModal}
+                    setShowRegisterModal={setShowRegisterModal}
                   />
                 } />
                 <Route path="*" element={<Navigate to="/" />} />
@@ -2102,6 +2155,11 @@ function PersonalizationWrapper() {
       onUpdateCognitiveProfile={handleUpdateCognitiveProfile}
     />
   );
+}
+
+// DashboardWithSessionControlsTrigger wraps Dashboard and injects the trigger for the modal
+function DashboardWithSessionControlsTrigger({ onOpenSessionControls, onOpenLearningPath }: { onOpenSessionControls: () => void; onOpenLearningPath: () => void }) {
+  return <Dashboard onOpenSessionControls={onOpenSessionControls} onOpenLearningPath={onOpenLearningPath} />;
 }
 
 export default App;

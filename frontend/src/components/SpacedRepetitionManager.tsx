@@ -199,11 +199,27 @@ const SpacedRepetitionManager: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Spaced Repetition</h1>
-          
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
+      {/* Decorative background elements for consistency with chat */}
+      <div className="absolute top-20 left-10 w-32 h-32 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
+      <div className="absolute top-40 right-20 w-24 h-24 bg-purple-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute bottom-20 left-20 w-20 h-20 bg-green-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-orange-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+      <div className="absolute bottom-1/3 right-1/4 w-28 h-28 bg-indigo-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+
+      <div className="max-w-4xl mx-auto my-10">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+          {/* Title and Subtitle in one row */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+            <div>
+              <h1 className="text-xl font-bold text-gray-900 flex items-center">
+                <span className="mr-2 text-2xl">🔄</span> Spaced Repetition
+              </h1>
+              <p className="text-sm text-gray-600">Review topics at optimal intervals for better retention</p>
+            </div>
+          </div>
+
+          {/* Topics or Empty State */}
           {topics.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🔄</div>
@@ -211,17 +227,16 @@ const SpacedRepetitionManager: React.FC = () => {
               <p className="text-gray-600">Great job! You're all caught up with your spaced repetition schedule.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {topics.map((topic) => (
-                <div key={topic.id} className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
-                  <div className="flex justify-between items-start mb-4">
+                <div key={topic.id} className="bg-gray-50 rounded-xl shadow p-4 border border-gray-200 hover:shadow-lg transition-shadow">
+                  <div className="flex justify-between items-start mb-2">
                     <h3 className="text-lg font-semibold text-gray-900">{topic.topic_title}</h3>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(topic.days_until_review)}`}>
                       {getPriorityText(topic.days_until_review)}
                     </span>
                   </div>
-                  
-                  <div className="space-y-3 mb-4">
+                  <div className="space-y-2 mb-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Review Count:</span>
                       <span className="font-semibold">{topic.review_count}</span>
@@ -236,13 +251,10 @@ const SpacedRepetitionManager: React.FC = () => {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Days Until Review:</span>
-                      <span className={`font-semibold ${topic.days_until_review <= 0 ? 'text-red-600' : 'text-gray-900'}`}>
-                        {topic.days_until_review <= 0 ? 'Overdue' : topic.days_until_review}
-                      </span>
+                      <span className={`font-semibold ${topic.days_until_review <= 0 ? 'text-red-600' : 'text-gray-900'}`}>{topic.days_until_review <= 0 ? 'Overdue' : topic.days_until_review}</span>
                     </div>
                   </div>
-                  
-                  <div className="flex gap-2 mb-4">
+                  <div className="flex gap-2 mb-2">
                     <button
                       onClick={() => {
                         setSelectedTopic(topic);
@@ -282,7 +294,6 @@ const SpacedRepetitionManager: React.FC = () => {
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{selectedTopic.topic_title}</h3>
                 <p className="text-gray-600">How well did you understand this topic?</p>
               </div>
-              
               <div className="space-y-4">
                 <button
                   onClick={() => handleReview(selectedTopic.topic_id, true)}
@@ -310,7 +321,6 @@ const SpacedRepetitionManager: React.FC = () => {
           </div>
         )}
       </div>
-      {/* Chat Icon - Fixed Position */}
       <ChatFab />
     </div>
   );

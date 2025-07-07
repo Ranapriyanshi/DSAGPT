@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import ChatFab from './ChatFab';
 
 interface LearningPathItem {
   order: number;
@@ -15,7 +14,11 @@ interface LearningPath {
   learning_path: LearningPathItem[];
 }
 
-const LearningPathManager: React.FC = () => {
+interface LearningPathManagerProps {
+  onClose: () => void;
+}
+
+const LearningPathManager: React.FC<LearningPathManagerProps> = ({ onClose }) => {
   const [learningPath, setLearningPath] = useState<LearningPathItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -72,10 +75,11 @@ const LearningPathManager: React.FC = () => {
     }
   };
 
+  // Modal loading and error states
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-        <div className="text-center">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 max-w-lg w-full text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
           <p className="text-gray-600 text-lg">Loading your personalized learning path...</p>
         </div>
@@ -85,8 +89,8 @@ const LearningPathManager: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-6">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 max-w-lg w-full text-center">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
           <h3 className="text-xl font-semibold text-gray-800 mb-2">Oops! Something went wrong</h3>
           <p className="text-gray-600 mb-6">{error}</p>
@@ -101,25 +105,38 @@ const LearningPathManager: React.FC = () => {
     );
   }
 
+  // Modal main content
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="max-w-6xl mx-auto p-6">
-        {/* Header */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 mb-8 border border-white/20">
-          <div className="text-center">
-            <div className="text-4xl mb-4">🗺️</div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">Your Personalized Learning Path</h1>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              This path is tailored to your learning style, cognitive profile, and current progress. 
-              Follow it step by step for optimal learning outcomes.
-            </p>
-          </div>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="relative bg-white rounded-2xl shadow-lg border border-gray-100 max-w-3xl w-full max-h-[90vh] flex flex-col p-0">
+        {/* Cross button, always on top */}
+        <div className="sticky top-0 left-0 z-30 flex justify-end p-4 bg-transparent">
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-700 text-2xl font-bold focus:outline-none bg-white/80 rounded-full w-10 h-10 flex items-center justify-center shadow"
+            aria-label="Close"
+            style={{ zIndex: 30 }}
+          >
+            &times;
+          </button>
         </div>
-
-        {/* Learning Path */}
-        <div className="space-y-6">
+        {/* Decorative background elements inside modal */}
+        <div className="absolute top-10 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-10 animate-gentlePulse pointer-events-none"></div>
+        <div className="absolute top-32 right-20 w-16 h-16 bg-purple-200 rounded-full opacity-10 animate-gentlePulse pointer-events-none" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-10 left-20 w-12 h-12 bg-green-200 rounded-full opacity-10 animate-gentlePulse pointer-events-none" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/4 w-10 h-10 bg-orange-200 rounded-full opacity-10 animate-gentlePulse pointer-events-none" style={{ animationDelay: '0.5s' }}></div>
+        <div className="absolute bottom-1/3 right-1/4 w-16 h-16 bg-indigo-200 rounded-full opacity-10 animate-gentlePulse pointer-events-none" style={{ animationDelay: '1.5s' }}></div>
+        <div className="relative z-10 flex-1 overflow-y-auto pt-2 px-4 pb-6 md:pt-4 md:px-8 md:pb-8">
+          {/* Main Card: Header, Question List, Progress Summary all in one */}
+          <div className="mb-2">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
+              <span className="mr-2 text-3xl md:text-4xl">🗺️</span> Learning Path
+            </h1>
+            <p className="text-sm text-gray-600">Your personalized, step-by-step journey to DSA mastery</p>
+          </div>
+          {/* Question List */}
           {learningPath.length === 0 ? (
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 text-center">
+            <div className="text-center">
               <div className="text-6xl mb-4">📚</div>
               <h3 className="text-xl font-semibold text-gray-800 mb-2">No Learning Path Available</h3>
               <p className="text-gray-600 mb-6">
@@ -133,48 +150,30 @@ const LearningPathManager: React.FC = () => {
               </button>
             </div>
           ) : (
-            learningPath.map((item, index) => (
-              <div
-                key={item.question_id}
-                className={`bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 ${
-                  item.completed ? 'opacity-75' : ''
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg ${
-                      item.completed 
-                        ? 'bg-green-500' 
-                        : 'bg-gradient-to-r from-blue-500 to-purple-500'
-                    }`}>
-                      {item.completed ? '✓' : index + 1}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-800">
-                          {item.title}
-                        </h3>
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(item.difficulty)}`}>
-                          {getDifficultyIcon(item.difficulty)} {item.difficulty}
-                        </span>
+            <div className="space-y-2 mb-6">
+              {learningPath.map((item, index) => (
+                <div
+                  key={item.question_id}
+                  className={`flex flex-col md:flex-row items-center justify-between gap-2 bg-white/90 rounded-xl shadow p-4 border border-white/20 hover:shadow-xl transition-all duration-300 ${item.completed ? 'opacity-75' : ''}`}
+                >
+                  <div className="flex items-center gap-4 flex-1 min-w-0">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg ${item.completed ? 'bg-green-500' : 'bg-gradient-to-r from-blue-500 to-purple-500'}`}>{item.completed ? '✓' : index + 1}</div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <h3 className="text-base font-semibold text-gray-900 truncate max-w-xs">{item.title}</h3>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getDifficultyColor(item.difficulty)}`}>{getDifficultyIcon(item.difficulty)} {item.difficulty}</span>
                         {item.difficulty_adjustment !== 0 && (
-                          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                            item.difficulty_adjustment > 0 
-                              ? 'bg-orange-100 text-orange-800' 
-                              : 'bg-blue-100 text-blue-800'
-                          }`}>
-                            {item.difficulty_adjustment > 0 ? '↗' : '↘'} Adjusted
-                          </span>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${item.difficulty_adjustment > 0 ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'}`}>{item.difficulty_adjustment > 0 ? '↗' : '↘'} Adjusted</span>
                         )}
                       </div>
-                      <div className="flex items-center space-x-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-4 text-xs text-gray-600 flex-wrap">
                         <span>⏱️ {item.estimated_duration} min</span>
                         <span>📊 Step {item.order}</span>
                         {item.completed && <span className="text-green-600 font-semibold">✓ Completed</span>}
                       </div>
                     </div>
                   </div>
-                  <div className="flex space-x-2">
+                  <div className="flex gap-2">
                     {!item.completed && (
                       <button
                         onClick={() => window.location.href = `/questions/${item.question_id}/solve`}
@@ -191,38 +190,31 @@ const LearningPathManager: React.FC = () => {
                     </button>
                   </div>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
-        </div>
-
-        {/* Progress Summary */}
-        {learningPath.length > 0 && (
-          <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">📊 Progress Summary</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">{learningPath.length}</div>
-                <div className="text-sm text-gray-600">Total Topics</div>
-              </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">
-                  {learningPath.filter(item => item.completed).length}
+          {/* Progress Summary */}
+          {learningPath.length > 0 && (
+            <div className="bg-white/70 rounded-xl p-4 border border-white/10">
+              <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center"><span className="mr-2 text-lg">📊</span> Progress Summary</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">{learningPath.length}</div>
+                  <div className="text-sm text-gray-600">Total Topics</div>
                 </div>
-                <div className="text-sm text-gray-600">Completed</div>
-              </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">
-                  {learningPath.length > 0 ? Math.round((learningPath.filter(item => item.completed).length / learningPath.length) * 100) : 0}%
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">{learningPath.filter(item => item.completed).length}</div>
+                  <div className="text-sm text-gray-600">Completed</div>
                 </div>
-                <div className="text-sm text-gray-600">Progress</div>
+                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-600">{learningPath.length > 0 ? Math.round((learningPath.filter(item => item.completed).length / learningPath.length) * 100) : 0}%</div>
+                  <div className="text-sm text-gray-600">Progress</div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-      {/* Chat Icon - Fixed Position */}
-      <ChatFab />
     </div>
   );
 };

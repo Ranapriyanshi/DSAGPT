@@ -9,7 +9,11 @@ interface SessionState {
   currentDifficulty: number;
 }
 
-const SessionControls: React.FC = () => {
+interface SessionControlsProps {
+  onClose: () => void;
+}
+
+const SessionControls: React.FC<SessionControlsProps> = ({ onClose }) => {
   const [sessionState, setSessionState] = useState<SessionState>({
     isPaused: false,
     currentMode: 'text',
@@ -216,35 +220,52 @@ const SessionControls: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Session Controls</h1>
-
-          {/* Session Status */}
-          <div className="mb-8">
-            <div className={`p-6 rounded-xl border-2 ${sessionState.isPaused ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Session Status: {sessionState.isPaused ? 'Paused' : 'Active'}
-                  </h3>
-                  {sessionState.isPaused && sessionState.pauseReason && (
-                    <p className="text-gray-600 mt-2">Reason: {sessionState.pauseReason}</p>
-                  )}
-                </div>
-                <div className="text-2xl">
-                  {sessionState.isPaused ? '⏸️' : '▶️'}
-                </div>
-              </div>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="relative bg-white rounded-2xl shadow-lg border border-gray-100 p-6 max-w-4xl w-full">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold focus:outline-none"
+          aria-label="Close"
+        >
+          &times;
+        </button>
+          {/* Title and Subtitle in one row */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+            <div>
+              <h1 className="text-xl font-bold text-gray-900 flex items-center">
+                <span className="mr-2 text-2xl">⚙️</span> Session Controls
+              </h1>
+              <p className="text-sm text-gray-600">Manage your learning session settings and preferences</p>
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Pause/Resume Controls */}
-            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Session Control</h3>
+          {/* First Row: Status, Current Settings, Session Control */}
+          <div className="flex flex-col md:flex-row gap-4 mb-4">
+            {/* Session Status */}
+            <div className={`flex-1 bg-gray-50 rounded-xl shadow p-4 border border-gray-200 flex flex-col justify-between`}>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-base font-medium text-gray-900">Session Status</h3>
+                <span className="text-2xl">{sessionState.isPaused ? '⏸️' : '▶️'}</span>
+              </div>
+              <div>
+                <span className={`font-semibold ${sessionState.isPaused ? 'text-red-600' : 'text-green-600'}`}>{sessionState.isPaused ? 'Paused' : 'Active'}</span>
+                {sessionState.isPaused && sessionState.pauseReason && (
+                  <p className="text-xs text-gray-600 mt-1">Reason: {sessionState.pauseReason}</p>
+                )}
+              </div>
+            </div>
+            {/* Current Settings */}
+            <div className="flex-1 bg-gray-50 rounded-xl shadow p-4 border border-gray-200 flex flex-col justify-between">
+              <h3 className="text-base font-medium text-gray-900 mb-2">Current Settings</h3>
+              <div className="space-y-1 text-sm">
+                <div><span className="text-gray-600">Mode:</span> <span className="ml-1 font-semibold text-gray-900 capitalize">{sessionState.currentMode}</span></div>
+                <div><span className="text-gray-600">Difficulty:</span> <span className="ml-1 font-semibold text-gray-900">{Math.round(sessionState.currentDifficulty * 100)}%</span></div>
+                <div><span className="text-gray-600">Status:</span> <span className={`ml-1 font-semibold ${sessionState.isPaused ? 'text-red-600' : 'text-green-600'}`}>{sessionState.isPaused ? 'Paused' : 'Active'}</span></div>
+              </div>
+            </div>
+            {/* Session Control */}
+            <div className="flex-1 bg-gray-50 rounded-xl shadow p-4 border border-gray-200 flex flex-col justify-between items-center">
+              <h3 className="text-base font-medium text-gray-900 mb-2">Session Control</h3>
               {sessionState.isPaused ? (
                 <button
                   onClick={() => sessionState.pauseId && handleResume(sessionState.pauseId)}
@@ -261,16 +282,20 @@ const SessionControls: React.FC = () => {
                 </button>
               )}
             </div>
+          </div>
 
+          {/* Second Row: Difficulty Level and Learning Mode */}
+          <div className="flex flex-col md:flex-row gap-4">
             {/* Difficulty Control */}
-            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Difficulty Level</h3>
+            <div className="flex-1 bg-gray-50 rounded-xl shadow p-4 border border-gray-200 flex flex-col justify-between">
+              <h3 className="text-base font-medium text-gray-900 mb-2">Difficulty Level</h3>
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => handleDifficultyChange(-0.1)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-xl"
+                  title="Easier"
                 >
-                  Easier
+                  ⏮️
                 </button>
                 <div className="flex-1 text-center">
                   <span className="text-lg font-semibold text-gray-900">
@@ -279,16 +304,16 @@ const SessionControls: React.FC = () => {
                 </div>
                 <button
                   onClick={() => handleDifficultyChange(0.1)}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-xl"
+                  title="Harder"
                 >
-                  Harder
+                  ⏭️
                 </button>
               </div>
             </div>
-
             {/* Learning Mode */}
-            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Learning Mode</h3>
+            <div className="flex-1 bg-gray-50 rounded-xl shadow p-4 border border-gray-200 flex flex-col justify-between">
+              <h3 className="text-base font-medium text-gray-900 mb-2">Learning Mode</h3>
               <div className="space-y-2">
                 {(['visual', 'text', 'analogy'] as const).map((mode) => (
                   <button
@@ -305,30 +330,7 @@ const SessionControls: React.FC = () => {
                 ))}
               </div>
             </div>
-
-            {/* Current Settings */}
-            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Current Settings</h3>
-              <div className="space-y-3">
-                <div>
-                  <span className="text-sm text-gray-600">Mode:</span>
-                  <span className="ml-2 font-semibold text-gray-900 capitalize">{sessionState.currentMode}</span>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Difficulty:</span>
-                  <span className="ml-2 font-semibold text-gray-900">{Math.round(sessionState.currentDifficulty * 100)}%</span>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Status:</span>
-                  <span className={`ml-2 font-semibold ${sessionState.isPaused ? 'text-red-600' : 'text-green-600'}`}>
-                    {sessionState.isPaused ? 'Paused' : 'Active'}
-                  </span>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
-
         {/* Pause Modal */}
         {showPauseModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -367,8 +369,6 @@ const SessionControls: React.FC = () => {
           </div>
         )}
       </div>
-      {/* Chat Icon - Fixed Position */}
-      <ChatFab />
     </div>
   );
 };

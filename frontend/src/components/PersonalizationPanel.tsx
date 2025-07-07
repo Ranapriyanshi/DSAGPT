@@ -155,143 +155,127 @@ const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Personalization Settings</h2>
-        <p className="text-gray-600">Customize your learning experience based on your preferences and cognitive profile.</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
+      {/* Decorative background elements for consistency with chat */}
+      <div className="absolute top-20 left-10 w-32 h-32 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
+      <div className="absolute top-40 right-20 w-24 h-24 bg-purple-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute bottom-20 left-20 w-20 h-20 bg-green-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-orange-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+      <div className="absolute bottom-1/3 right-1/4 w-28 h-28 bg-indigo-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '1.5s' }}></div>
 
-      {/* Tab Navigation */}
-      <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
-        <button
-          onClick={() => setActiveTab('learning-style')}
-          className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
-            activeTab === 'learning-style'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-800'
-          }`}
-        >
-          🎨 Learning Style
-        </button>
-        <button
-          onClick={() => setActiveTab('cognitive-profile')}
-          className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
-            activeTab === 'cognitive-profile'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-800'
-          }`}
-        >
-          🧠 Cognitive Profile
-        </button>
-      </div>
-
-      {/* Message Display */}
-      {message && (
-        <div className={`mb-4 p-3 rounded-lg ${
-          message.includes('Error') 
-            ? 'bg-red-50 text-red-700 border border-red-200' 
-            : 'bg-green-50 text-green-700 border border-green-200'
-        }`}>
-          {message}
-        </div>
-      )}
-
-      {/* Learning Style Tab */}
-      {activeTab === 'learning-style' && (
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Learning Style Preferences</h3>
-            <p className="text-gray-600 mb-6">Adjust these sliders to reflect how you prefer to learn. The system will adapt its teaching style accordingly.</p>
+      <div className="max-w-4xl mx-auto my-10">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+          {/* Title and Subtitle in one row */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+            <div>
+              <h1 className="text-xl font-bold text-gray-900 flex items-center">
+                <span className="mr-2 text-2xl">🎨</span> Personalization
+              </h1>
+              <p className="text-sm text-gray-600">Customize your learning experience based on your preferences and cognitive profile</p>
+            </div>
           </div>
 
-          {Object.entries(learningStyle).map(([key, value]) => (
-            <div key={key} className="space-y-2">
-              <div className="flex justify-between items-center">
-                <label className="text-sm font-medium text-gray-700 capitalize">
-                  {key.replace('_', ' ')}
-                </label>
-                <span className="text-sm text-gray-500">{Math.round(value * 100)}%</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={value}
-                onChange={(e) => setLearningStyle(prev => ({
-                  ...prev,
-                  [key]: parseFloat(e.target.value)
-                }))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-              />
-              <p className="text-xs text-gray-500">{getLearningStyleDescription(key)}</p>
-            </div>
-          ))}
-
-          <button
-            onClick={handleLearningStyleUpdate}
-            disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-semibold shadow-lg disabled:opacity-50"
-          >
-            {loading ? 'Updating...' : 'Update Learning Style'}
-          </button>
-        </div>
-      )}
-
-      {/* Cognitive Profile Tab */}
-      {activeTab === 'cognitive-profile' && (
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Cognitive Profile</h3>
-            <p className="text-gray-600 mb-6">These settings help the system understand your cognitive strengths and adapt the learning pace and complexity.</p>
+          {/* Tab Navigation */}
+          <div className="flex space-x-2 mb-4 bg-gray-100 p-1 rounded-xl shadow-inner">
+            <button
+              onClick={() => setActiveTab('learning-style')}
+              className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-colors text-lg focus:outline-none focus:ring-2 focus:ring-blue-200 ${
+                activeTab === 'learning-style'
+                  ? 'bg-white text-blue-600 shadow border border-blue-200'
+                  : 'text-gray-600 hover:text-blue-700'
+              }`}
+            >
+              🎨 Learning Style
+            </button>
+            <button
+              onClick={() => setActiveTab('cognitive-profile')}
+              className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-colors text-lg focus:outline-none focus:ring-2 focus:ring-blue-200 ${
+                activeTab === 'cognitive-profile'
+                  ? 'bg-white text-blue-600 shadow border border-blue-200'
+                  : 'text-gray-600 hover:text-blue-700'
+              }`}
+            >
+              🧠 Cognitive Profile
+            </button>
           </div>
 
-          {Object.entries(cognitiveProfile).map(([key, value]) => (
-            <div key={key} className="space-y-2">
-              <div className="flex justify-between items-center">
-                <label className="text-sm font-medium text-gray-700 capitalize">
-                  {key.replace('_', ' ')}
-                </label>
-                <span className="text-sm text-gray-500">{Math.round(value * 100)}%</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={value}
-                onChange={(e) => setCognitiveProfile(prev => ({
-                  ...prev,
-                  [key]: parseFloat(e.target.value)
-                }))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-              />
-              <p className="text-xs text-gray-500">{getCognitiveDescription(key)}</p>
+          {/* Message Display */}
+          {message && (
+            <div className={`mb-4 p-3 rounded-xl border text-base font-medium flex items-center gap-2 ${
+              message.includes('Error') 
+                ? 'bg-red-50 text-red-700 border-red-200' 
+                : 'bg-green-50 text-green-700 border-green-200'
+            }`}>
+              {message.includes('Error') ? <span className="text-2xl">❌</span> : <span className="text-2xl">✅</span>}
+              {message}
             </div>
-          ))}
+          )}
 
-          <button
-            onClick={handleCognitiveProfileUpdate}
-            disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 font-semibold shadow-lg disabled:opacity-50"
-          >
-            {loading ? 'Updating...' : 'Update Cognitive Profile'}
-          </button>
+          {/* Learning Style Tab */}
+          {activeTab === 'learning-style' && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">Learning Style Preferences</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                {Object.entries(learningStyle).map(([key, value]) => (
+                  <div key={key} className="bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-100 flex flex-col gap-2">
+                    <span className="font-medium text-gray-800 capitalize">{key.replace(/_/g, ' ')}</span>
+                    <span className="text-gray-500 text-sm">{getLearningStyleDescription(key)}</span>
+                    <input
+                      type="range"
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      value={value}
+                      onChange={e => setLearningStyle({ ...learningStyle, [key]: parseFloat(e.target.value) })}
+                      className="w-full accent-blue-500 mt-2"
+                    />
+                    <span className="text-blue-600 font-semibold">{Math.round(value * 100)}%</span>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={handleLearningStyleUpdate}
+                disabled={loading}
+                className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-semibold text-lg shadow disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Saving...' : 'Save Learning Style'}
+              </button>
+            </div>
+          )}
+
+          {/* Cognitive Profile Tab */}
+          {activeTab === 'cognitive-profile' && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">Cognitive Profile</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                {Object.entries(cognitiveProfile).map(([key, value]) => (
+                  <div key={key} className="bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-100 flex flex-col gap-2">
+                    <span className="font-medium text-gray-800 capitalize">{key.replace(/_/g, ' ')}</span>
+                    <span className="text-gray-500 text-sm">{getCognitiveDescription(key)}</span>
+                    <input
+                      type="range"
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      value={value}
+                      onChange={e => setCognitiveProfile({ ...cognitiveProfile, [key]: parseFloat(e.target.value) })}
+                      className="w-full accent-blue-500 mt-2"
+                    />
+                    <span className="text-blue-600 font-semibold">{Math.round(value * 100)}%</span>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={handleCognitiveProfileUpdate}
+                disabled={loading}
+                className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-semibold text-lg shadow disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Saving...' : 'Save Cognitive Profile'}
+              </button>
+            </div>
+          )}
         </div>
-      )}
-
-      {/* Summary */}
-      <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-        <h4 className="font-semibold text-gray-800 mb-2">How This Affects Your Learning</h4>
-        <ul className="text-sm text-gray-600 space-y-1">
-          <li>• Learning style preferences determine how explanations are presented</li>
-          <li>• Cognitive profile affects the pace and complexity of content</li>
-          <li>• The system adapts in real-time based on your emotional responses</li>
-          <li>• Your preferences are remembered across sessions</li>
-        </ul>
       </div>
-
-      {/* Chat Icon - Fixed Position */}
       <ChatFab />
     </div>
   );
