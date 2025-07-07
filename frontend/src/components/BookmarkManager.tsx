@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ChatFab from './ChatFab';
 
 interface Bookmark {
   id: number;
@@ -344,6 +345,8 @@ const BookmarkManager: React.FC<BookmarkManagerProps> = ({ onClose }) => {
           </div>
         )}
       </div>
+      {/* Chat Icon - Fixed Position */}
+      <ChatFab />
     </div>
   );
   }
@@ -543,6 +546,8 @@ const BookmarkManager: React.FC<BookmarkManagerProps> = ({ onClose }) => {
           </div>
         )}
       </div>
+      {/* Chat Icon - Fixed Position */}
+      <ChatFab />
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ChatFab from './ChatFab';
 
 interface LearningStyle {
   visual_preference: number;
@@ -289,6 +290,9 @@ const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
           <li>• Your preferences are remembered across sessions</li>
         </ul>
       </div>
+
+      {/* Chat Icon - Fixed Position */}
+      <ChatFab />
     </div>
   );
 };

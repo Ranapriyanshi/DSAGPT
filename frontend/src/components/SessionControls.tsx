@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ChatFab from './ChatFab';
 
 interface SessionState {
   isPaused: boolean;
@@ -366,6 +367,8 @@ const SessionControls: React.FC = () => {
           </div>
         )}
       </div>
+      {/* Chat Icon - Fixed Position */}
+      <ChatFab />
     </div>
   );
 };

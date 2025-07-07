@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ChatFab from './ChatFab';
 
 interface LearningPathItem {
   order: number;
@@ -220,6 +221,8 @@ const LearningPathManager: React.FC = () => {
           </div>
         )}
       </div>
+      {/* Chat Icon - Fixed Position */}
+      <ChatFab />
     </div>
   );
 };

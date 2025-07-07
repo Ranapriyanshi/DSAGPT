@@ -44,7 +44,7 @@ const AnalyticsDashboard: React.FC = () => {
   const [realTimeTrends, setRealTimeTrends] = useState<any[]>([]);
   const [realTimeLoading, setRealTimeLoading] = useState(true);
   const [realTimeError, setRealTimeError] = useState('');
-  const [timeWindow, setTimeWindow] = useState(30); // minutes
+  const [daysWindow, setDaysWindow] = useState(1); // days
 
   useEffect(() => {
     fetchAnalytics();
@@ -61,7 +61,7 @@ const AnalyticsDashboard: React.FC = () => {
           setRealTimeLoading(false);
           return;
         }
-        const response = await fetch(`http://127.0.0.1:8000/analytics/emotional-trends?days=${Math.ceil(timeWindow / 1440)}`, {
+        const response = await fetch(`http://127.0.0.1:8000/analytics/emotional-trends?days=${daysWindow}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Failed to fetch real-time trends');
@@ -82,7 +82,7 @@ const AnalyticsDashboard: React.FC = () => {
     fetchRealTimeTrends();
     interval = setInterval(fetchRealTimeTrends, 10000); // Poll every 10s
     return () => clearInterval(interval);
-  }, [timeWindow]);
+  }, [daysWindow]);
 
   const fetchAnalytics = async () => {
     try {
@@ -225,154 +225,7 @@ const AnalyticsDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
-      {/* Real-Time Emotional Trends Section */}
-      <div className="max-w-4xl mx-auto mt-8 mb-8 p-6 bg-white rounded-lg shadow-md">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-blue-700">Real-Time Emotional Trends</h2>
-          <select
-            value={timeWindow}
-            onChange={(e) => setTimeWindow(Number(e.target.value))}
-            className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value={10}>Last 10 minutes</option>
-            <option value={30}>Last 30 minutes</option>
-            <option value={60}>Last 1 hour</option>
-            <option value={1440}>Last 24 hours</option>
-          </select>
-        </div>
-        {realTimeLoading ? (
-          <div className="text-gray-500">Loading real-time trends...</div>
-        ) : realTimeError ? (
-          <div className="text-red-500">{realTimeError}</div>
-        ) : realTimeTrends.length === 0 ? (
-          <div className="text-gray-400">No emotional trend data available.</div>
-        ) : (
-          <>
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={realTimeTrends} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="time" />
-                <YAxis domain={[-1, 1]} />
-                <Tooltip 
-                  content={({ active, payload, label }) => {
-                    if (active && payload && payload.length) {
-                      const data = payload[0].payload;
-                      return (
-                        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                          <p className="font-semibold">Time: {label}</p>
-                          <p>Sentiment: {data.sentiment?.toFixed(3)}</p>
-                          <p>Emotion: {data.emotion}</p>
-                          {data.topic && <p>Topic: {data.topic}</p>}
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="sentiment"
-                  stroke="#8884d8"
-                  dot={false}
-                  isAnimationActive={false}
-                />
-                {realTimeTrends.map((entry, index) => (
-                  <Line
-                    key={index}
-                    type="monotone"
-                    dataKey={() => entry.sentiment}
-                    stroke={
-                      entry.emotion === 'positive' ? '#10B981' :
-                      entry.emotion === 'negative' ? '#EF4444' : '#6B7280'
-                    }
-                    dot={{
-                      stroke: entry.emotion === 'positive' ? '#10B981' : entry.emotion === 'negative' ? '#EF4444' : '#6B7280',
-                      strokeWidth: 2,
-                      r: 4
-                    }}
-                    activeDot={false}
-                  />
-                ))}
-              </LineChart>
-            </ResponsiveContainer>
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Emotion Category Counts</h3>
-                <ResponsiveContainer width="100%" height={180}>
-                  <BarChart data={['positive', 'neutral', 'negative'].map(cat => ({
-                    emotion: cat.charAt(0).toUpperCase() + cat.slice(1),
-                    count: realTimeTrends.filter(t => t.emotion === cat).length
-                  }))}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="emotion" />
-                    <YAxis allowDecimals={false} />
-                    <Tooltip />
-                    <Bar dataKey="count">
-                      <Cell fill="#10B981" />
-                      <Cell fill="#6B7280" />
-                      <Cell fill="#EF4444" />
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Emotion Distribution</h3>
-                <ResponsiveContainer width="100%" height={180}>
-                  <PieChart>
-                    <Pie
-                      data={['positive', 'neutral', 'negative'].map(cat => {
-                        const count = realTimeTrends.filter(t => t.emotion === cat).length;
-                        const percentage = realTimeTrends.length > 0 ? (count / realTimeTrends.length) * 100 : 0;
-                        return {
-                          name: cat.charAt(0).toUpperCase() + cat.slice(1),
-                          value: count,
-                          percentage: percentage.toFixed(1)
-                        };
-                      }).filter(item => item.value > 0)}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={60}
-                      dataKey="value"
-                    >
-                      <Cell fill="#10B981" />
-                      <Cell fill="#6B7280" />
-                      <Cell fill="#EF4444" />
-                    </Pie>
-                    <Tooltip 
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          const data = payload[0].payload;
-                          return (
-                            <div className="bg-white p-2 border border-gray-200 rounded shadow">
-                              <p className="font-semibold">{data.name}</p>
-                              <p>Count: {data.value}</p>
-                              <p>Percentage: {data.percentage}%</p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-            <div className="flex gap-4 mt-2 justify-center">
-              <span className="flex items-center"><span className="inline-block w-3 h-3 rounded-full mr-1" style={{background:'#10B981'}}></span>Positive</span>
-              <span className="flex items-center"><span className="inline-block w-3 h-3 rounded-full mr-1" style={{background:'#6B7280'}}></span>Neutral</span>
-              <span className="flex items-center"><span className="inline-block w-3 h-3 rounded-full mr-1" style={{background:'#EF4444'}}></span>Negative</span>
-            </div>
-          </>
-        )}
-      </div>
-      {/* Decorative background elements */}
-      <div className="absolute top-20 left-10 w-32 h-32 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
-      <div className="absolute top-40 right-20 w-24 h-24 bg-purple-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '1s' }}></div>
-      <div className="absolute bottom-20 left-20 w-20 h-20 bg-green-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
-      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-orange-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-      <div className="absolute bottom-1/3 right-1/4 w-28 h-28 bg-indigo-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-
-      {/* Hero Section */}
+      {/* Hero Section and Key Metrics */}
       <div className="relative z-10">
         <div className="bg-white/80 backdrop-blur-sm shadow-sm border-b border-white/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -540,6 +393,148 @@ const AnalyticsDashboard: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {/* Real-Time Emotional Trends Section (full width on large screens) */}
+            <div className="mt-8 mb-8 p-6 bg-white rounded-lg shadow-md lg:col-span-2">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-blue-700">Real-Time Emotional Trends</h2>
+                <select
+                  value={daysWindow}
+                  onChange={(e) => setDaysWindow(Number(e.target.value))}
+                  className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value={1}>Last 1 day</option>
+                  <option value={5}>Last 5 days</option>
+                  <option value={10}>Last 10 days</option>
+                  <option value={15}>Last 15 days</option>
+                  <option value={365}>All</option>
+                </select>
+              </div>
+              {realTimeLoading ? (
+                <div className="text-gray-500">Loading real-time trends...</div>
+              ) : realTimeError ? (
+                <div className="text-red-500">{realTimeError}</div>
+              ) : realTimeTrends.length === 0 ? (
+                <div className="text-gray-400">No emotional trend data available.</div>
+              ) : (
+                <>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <LineChart data={realTimeTrends} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="time" />
+                      <YAxis domain={[-1, 1]} />
+                      <Tooltip 
+                        content={({ active, payload, label }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+                                <p className="font-semibold">Time: {label}</p>
+                                <p>Sentiment: {data.sentiment?.toFixed(3)}</p>
+                                <p>Emotion: {data.emotion}</p>
+                                {data.topic && <p>Topic: {data.topic}</p>}
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="sentiment"
+                        stroke="#8884d8"
+                        dot={false}
+                        isAnimationActive={false}
+                      />
+                      {realTimeTrends.map((entry, index) => (
+                        <Line
+                          key={index}
+                          type="monotone"
+                          dataKey={() => entry.sentiment}
+                          stroke={
+                            entry.emotion === 'positive' ? '#10B981' :
+                            entry.emotion === 'negative' ? '#EF4444' : '#6B7280'
+                          }
+                          dot={{
+                            stroke: entry.emotion === 'positive' ? '#10B981' : entry.emotion === 'negative' ? '#EF4444' : '#6B7280',
+                            strokeWidth: 2,
+                            r: 4
+                          }}
+                          activeDot={false}
+                        />
+                      ))}
+                    </LineChart>
+                  </ResponsiveContainer>
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Emotion Category Counts</h3>
+                      <ResponsiveContainer width="100%" height={180}>
+                        <BarChart data={['positive', 'neutral', 'negative'].map(cat => ({
+                          emotion: cat.charAt(0).toUpperCase() + cat.slice(1),
+                          count: realTimeTrends.filter(t => t.emotion === cat).length
+                        }))}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="emotion" />
+                          <YAxis allowDecimals={false} />
+                          <Tooltip />
+                          <Bar dataKey="count">
+                            <Cell fill="#10B981" />
+                            <Cell fill="#6B7280" />
+                            <Cell fill="#EF4444" />
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Emotion Distribution</h3>
+                      <ResponsiveContainer width="100%" height={180}>
+                        <PieChart>
+                          <Pie
+                            data={['positive', 'neutral', 'negative'].map(cat => {
+                              const count = realTimeTrends.filter(t => t.emotion === cat).length;
+                              const percentage = realTimeTrends.length > 0 ? (count / realTimeTrends.length) * 100 : 0;
+                              return {
+                                name: cat.charAt(0).toUpperCase() + cat.slice(1),
+                                value: count,
+                                percentage: percentage.toFixed(1)
+                              };
+                            }).filter(item => item.value > 0)}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={60}
+                            dataKey="value"
+                          >
+                            <Cell fill="#10B981" />
+                            <Cell fill="#6B7280" />
+                            <Cell fill="#EF4444" />
+                          </Pie>
+                          <Tooltip 
+                            content={({ active, payload }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                  <div className="bg-white p-2 border border-gray-200 rounded shadow">
+                                    <p className="font-semibold">{data.name}</p>
+                                    <p>Count: {data.value}</p>
+                                    <p>Percentage: {data.percentage}%</p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                  <div className="flex gap-4 mt-2 justify-center">
+                    <span className="flex items-center"><span className="inline-block w-3 h-3 rounded-full mr-1" style={{background:'#10B981'}}></span>Positive</span>
+                    <span className="flex items-center"><span className="inline-block w-3 h-3 rounded-full mr-1" style={{background:'#6B7280'}}></span>Neutral</span>
+                    <span className="flex items-center"><span className="inline-block w-3 h-3 rounded-full mr-1" style={{background:'#EF4444'}}></span>Negative</span>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Recommendations */}
@@ -622,15 +617,8 @@ const AnalyticsDashboard: React.FC = () => {
         </div>
       </div>
       
-      {/* Chat Icon - Fixed Position */}
-      <Link 
-        to="/chat" 
-        className="fixed top-20 right-4 z-40 p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-        </svg>
-      </Link>
+      {/* Remove old floating chat button if present */}
+      {/* <Link ...>...</Link> */}
     </div>
   );
 };

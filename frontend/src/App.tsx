@@ -11,6 +11,7 @@ import SessionControls from './components/SessionControls';
 import SpacedRepetitionManager from './components/SpacedRepetitionManager';
 import PersonalizationPanel from './components/PersonalizationPanel';
 import LearningPathManager from './components/LearningPathManager';
+import ChatFab from './components/ChatFab';
 
 // Define a Message type
 interface Message {
@@ -28,7 +29,7 @@ interface Quiz {
   answer: number; // index of correct option
 }
 
-function Login() {
+function Login({ setShowLoginModal, setShowRegisterModal }: { setShowLoginModal: (show: boolean) => void; setShowRegisterModal: (show: boolean) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -62,7 +63,7 @@ function Login() {
       <div className="absolute top-40 right-20 w-16 h-16 bg-purple-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
       <div className="absolute bottom-20 left-20 w-12 h-12 bg-green-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
       
-      <form className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 border border-white/20" onSubmit={handleSubmit}>
+      <form className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl p-4 max-w-sm w-full mx-4 border border-white/20" onSubmit={handleSubmit}>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Welcome Back to
@@ -98,19 +99,18 @@ function Login() {
         >
           Sign In
         </button>
-        
         <p className="text-center mt-6 text-gray-600">
           Don't have an account?{' '}
-          <Link to="/register" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
-            Register here
-          </Link>
+          <button type="button" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors underline" onClick={() => { setShowLoginModal(false); setShowRegisterModal(true); }}>
+            Register
+          </button>
         </p>
       </form>
     </div>
   );
 }
 
-function Register() {
+function Register({ setShowLoginModal, setShowRegisterModal }: { setShowLoginModal: (show: boolean) => void; setShowRegisterModal: (show: boolean) => void }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -149,7 +149,7 @@ function Register() {
       <div className="absolute top-40 right-20 w-16 h-16 bg-purple-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
       <div className="absolute bottom-20 left-20 w-12 h-12 bg-green-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
       
-      <form className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 border border-white/20" onSubmit={handleSubmit}>
+      <form className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl p-4 max-w-sm w-full mx-4 border border-white/20" onSubmit={handleSubmit}>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Join
@@ -210,14 +210,13 @@ function Register() {
           className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 font-semibold text-lg shadow-lg" 
           type="submit"
         >
-          Get Started
+          Register
         </button>
-        
         <p className="text-center mt-6 text-gray-600">
           Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
-            Login here
-          </Link>
+          <button type="button" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors underline" onClick={() => { setShowRegisterModal(false); setShowLoginModal(true); }}>
+            Sign In
+          </button>
         </p>
       </form>
     </div>
@@ -532,7 +531,7 @@ function Dashboard() {
         
         {/* Motivational Section */}
         <div className="mt-12 animate-fadeInUp" style={{ animationDelay: '0.8s' }}>
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-8 m-12 text-white relative overflow-hidden">
             {/* Background decorative elements */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
@@ -568,16 +567,7 @@ function Dashboard() {
           </div>
         </div>
       </div>
-      
-      {/* Chat Icon - Fixed Position */}
-      <Link 
-        to="/chat" 
-        className="fixed top-20 right-4 z-40 p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-        </svg>
-      </Link>
+      <ChatFab />
     </div>
   );
 }
@@ -933,16 +923,7 @@ function Questions() {
           </div>
         </div>
       </div>
-      
-      {/* Chat Icon - Fixed Position */}
-      <Link 
-        to="/chat" 
-        className="fixed top-20 right-4 z-40 p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-        </svg>
-      </Link>
+      <ChatFab />
     </div>
   );
 }
@@ -1185,7 +1166,7 @@ function SolveQuestion() {
       {/* Chat Icon - Fixed Position */}
       <Link 
         to="/chat" 
-        className="fixed top-20 right-4 z-40 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-200 hover:scale-110"
+        className="fixed bottom-6 right-6 z-40 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-200 hover:scale-110"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -1225,7 +1206,7 @@ function ThemeToggle() {
 }
 
 // Login Modal Component
-function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
+function LoginModal({ onClose, onSuccess, setShowLoginModal, setShowRegisterModal }: { onClose: () => void; onSuccess: () => void; setShowLoginModal: (show: boolean) => void; setShowRegisterModal: (show: boolean) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -1308,13 +1289,19 @@ function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: ()
       >
         Sign In
       </button>
+      <p className="text-center mt-6 text-gray-600">
+        Don't have an account?{' '}
+        <button type="button" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors underline" onClick={() => { setShowLoginModal(false); setShowRegisterModal(true); }}>
+          Register
+        </button>
+      </p>
       </form>
     </div>
   );
 }
 
 // Register Modal Component
-function RegisterModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
+function RegisterModal({ onClose, onSuccess, setShowLoginModal, setShowRegisterModal }: { onClose: () => void; onSuccess: () => void; setShowLoginModal: (show: boolean) => void; setShowRegisterModal: (show: boolean) => void }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -1433,8 +1420,14 @@ function RegisterModal({ onClose, onSuccess }: { onClose: () => void; onSuccess:
         className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 font-semibold text-lg shadow-lg" 
         type="submit"
       >
-        Get Started
+        Register
       </button>
+      <p className="text-center mt-6 text-gray-600">
+        Already have an account?{' '}
+        <button type="button" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors underline" onClick={() => { setShowRegisterModal(false); setShowLoginModal(true); }}>
+          Sign In
+        </button>
+      </p>
       </form>
     </div>
   );
@@ -1749,6 +1742,7 @@ function LandingPage({
         </div>
       </div>
 
+      <ChatFab />
     </div>
   );
 }
@@ -1781,7 +1775,7 @@ function NavLink({ item, sidebarCollapsed, onClick }: {
         {item.icon}
       </span>
       {!sidebarCollapsed && (
-        <span className="font-medium">{item.label}</span>
+        <span className={`font-medium transition-all duration-300 delay-150 ${sidebarCollapsed ? 'opacity-0 translate-x-4' : 'opacity-100 translate-x-0'}`}>{item.label}</span>
       )}
     </Link>
   );
@@ -1849,45 +1843,57 @@ function App() {
             }`}>
               <div className="flex flex-col h-full">
                 {/* Sidebar Header */}
-                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex flex-col w-full">
                   {!sidebarCollapsed ? (
-                    <Link to="/dashboard" className="text-xl font-bold text-blue-600 dark:text-blue-400 block mb-3">
-                      DSA-GPT
-                    </Link>
-                  ) : (
-                    <Link to="/dashboard" className="block mb-3">
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">D</span>
+                    <Link to="/dashboard" className="block mb-3 w-full">
+                      <div className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center overflow-hidden">
+                        <span className={`text-white font-bold text-xl tracking-wide transition-all duration-300 delay-150 ${sidebarCollapsed ? 'opacity-0 translate-x-4' : 'opacity-100 translate-x-0'}`}>DSA-GPT</span>
                       </div>
                     </Link>
+                  ) : (
+                    <div className="flex flex-col items-center mb-3">
+                      <Link to="/dashboard">
+                        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-2">
+                          <span className="text-white font-bold text-lg">D</span>
+                        </div>
+                      </Link>
+                      <button
+                        onClick={() => setSidebarCollapsed(false)}
+                        className="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        title="Expand sidebar"
+                      >
+                        <svg className="w-7 h-7 block mx-auto my-auto" fill="none" stroke="#6366f1" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
                   )}
-                  <div className="flex items-center justify-between">
-                    <button
-                      onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                      className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center space-x-2"
-                      title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-                          d={sidebarCollapsed ? "M13 5l7 7-7 7M5 5l7 7-7 7" : "M11 19l-7-7 7-7M19 19l-7-7 7-7"} />
-                      </svg>
-                      {!sidebarCollapsed && (
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Collapse</span>
-                      )}
-                    </button>
-                    <button
-                      onClick={() => setSidebarOpen(false)}
-                      className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
+                  {!sidebarCollapsed && (
+                    <div className="flex items-center justify-between mt-2 w-full">
+                      <button
+                        onClick={() => setSidebarCollapsed(true)}
+                        className="flex items-center px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors space-x-3 w-full"
+                        title="Collapse sidebar"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 19l-7-7 7-7" />
+                        </svg>
+                        <span className="text-base font-medium text-gray-700 dark:text-gray-300">Collapse</span>
+                      </button>
+                      <button
+                        onClick={() => setSidebarOpen(false)}
+                        className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 ml-2"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Navigation Items */}
-                <nav className="flex-1 px-2 py-3 space-y-1 overflow-y-auto">
+                <nav className="flex-1 px-2 py-3 space-y-1 overflow-y-auto w-full">
                   {navItems.map((item) => (
                     <NavLink
                       key={item.path}
@@ -1901,11 +1907,11 @@ function App() {
                 {/* Sidebar Footer */}
                 <div className="p-2 border-t border-gray-200 dark:border-gray-700 space-y-2">
                   {/* Theme Toggle */}
-                  <div className={`flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg ${
+                  <div className={`flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg w-full ${
                     sidebarCollapsed ? 'justify-center' : 'justify-between'
                   }`}>
                     {!sidebarCollapsed && (
-                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Theme</span>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Theme</span>
                     )}
                     <ThemeToggle />
                   </div>
@@ -1984,11 +1990,11 @@ function App() {
                 <Link to="/">DSA-GPT</Link>
               </div>
               <div className="flex items-center space-x-4">
-                <button onClick={() => setShowRegisterModal(true)} className="hover:underline bg-transparent border-none text-white cursor-pointer">
+                <button onClick={() => setShowRegisterModal(true)} className="hover:underline bg-transparent border-none text-white cursor-pointer hidden md:inline">
                   Register
                 </button>
-                <button onClick={() => setShowLoginModal(true)} className="px-4 py-2 border border-white rounded-full text-white hover:bg-white hover:text-blue-600 transition-all duration-200">
-                  Login
+                <button onClick={() => setShowLoginModal(true)} className="px-4 py-2 border border-white rounded-full text-white hover:bg-white hover:text-blue-600 transition-all duration-200 hidden md:inline">
+                  Sign In
                 </button>
                 <ThemeToggle />
               </div>
@@ -2019,6 +2025,8 @@ function App() {
                 setShowLoginModal(false);
                 window.location.reload();
               }}
+              setShowLoginModal={setShowLoginModal}
+              setShowRegisterModal={setShowRegisterModal}
             />
           </div>
         )}
@@ -2030,6 +2038,8 @@ function App() {
                 setShowRegisterModal(false);
                 window.location.reload();
               }}
+              setShowLoginModal={setShowLoginModal}
+              setShowRegisterModal={setShowRegisterModal}
             />
           </div>
         )}
