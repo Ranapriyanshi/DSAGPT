@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ChatFab from './ChatFab';
+import { apiUrl } from '../api';
 
 interface LearningStyle {
   visual_preference: number;
@@ -72,10 +73,10 @@ const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
       if (!token) return;
 
       const [learningStyleRes, cognitiveProfileRes] = await Promise.all([
-        fetch('http://127.0.0.1:8000/personalization/learning-style', {
+        fetch(apiUrl('personalization/learning-style'), {
           headers: { 'Authorization': `Bearer ${token}` }
         }),
-        fetch('http://127.0.0.1:8000/personalization/cognitive-profile', {
+        fetch(apiUrl('personalization/cognitive-profile'), {
           headers: { 'Authorization': `Bearer ${token}` }
         })
       ]);

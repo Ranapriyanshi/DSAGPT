@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+import { apiUrl } from '../api';
 
 interface LearningAnalytics {
   total_sessions: number;
@@ -61,7 +62,7 @@ const AnalyticsDashboard: React.FC = () => {
           setRealTimeLoading(false);
           return;
         }
-        const response = await fetch(`http://127.0.0.1:8000/analytics/emotional-trends?days=${daysWindow}`, {
+        const response = await fetch(apiUrl(`/analytics/emotional-trends?days=${daysWindow}`), {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Failed to fetch real-time trends');
@@ -99,9 +100,9 @@ const AnalyticsDashboard: React.FC = () => {
 
       // Fetch all analytics data in parallel
       const [summaryResponse, topicResponse, recResponse] = await Promise.all([
-        fetch('http://127.0.0.1:8000/analytics/learning-summary', { headers }),
-        fetch('http://127.0.0.1:8000/analytics/topic-performance', { headers }),
-        fetch('http://127.0.0.1:8000/analytics/recommendations', { headers })
+        fetch(apiUrl('/analytics/learning-summary'), { headers }),
+        fetch(apiUrl('/analytics/topic-performance'), { headers }),
+        fetch(apiUrl('/analytics/recommendations'), { headers })
       ]);
 
       if (!summaryResponse.ok || !topicResponse.ok || !recResponse.ok) {

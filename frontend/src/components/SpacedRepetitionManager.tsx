@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ChatFab from './ChatFab';
+import { apiUrl } from '../api';
 
 interface SpacedRepetitionTopic {
   id: number;
@@ -38,7 +39,7 @@ const SpacedRepetitionManager: React.FC = () => {
         return;
       }
 
-      const response = await fetch('http://127.0.0.1:8000/personalization/spaced-repetition', {
+      const response = await fetch(apiUrl('personalization/spaced-repetition'), {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -85,7 +86,7 @@ const SpacedRepetitionManager: React.FC = () => {
         return;
       }
 
-      const response = await fetch(`http://127.0.0.1:8000/personalization/spaced-repetition/${topicId}/review?success=${success}`, {
+      const response = await fetch(apiUrl(`personalization/spaced-repetition/${topicId}/review?success=${success}`), {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

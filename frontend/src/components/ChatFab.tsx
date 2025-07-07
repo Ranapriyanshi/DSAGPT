@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { apiUrl } from '../api';
 
 interface Message {
   sender: 'user' | 'bot';
@@ -68,7 +69,7 @@ const ChatFab: React.FC = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:8000/chat/message', {
+      const res = await fetch(apiUrl('chat/message'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
         body: JSON.stringify({ message: userMsg.text, topic: 'DSA' })

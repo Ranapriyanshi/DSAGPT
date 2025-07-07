@@ -3,6 +3,7 @@ import { marked } from 'marked';
 import ReactMarkdown from 'react-markdown';
 import VisualDSARenderer from './VisualDSARenderer';
 import BookmarkManager from './BookmarkManager';
+import { apiUrl } from '../api';
 
 interface Message {
   sender: 'user' | 'bot';
@@ -127,7 +128,7 @@ const EmotionAwareChat: React.FC = () => {
         throw new Error('No authentication token');
       }
 
-      const response = await fetch('http://127.0.0.1:8000/chat/message', {
+      const response = await fetch(apiUrl('chat/message'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -223,7 +224,7 @@ const EmotionAwareChat: React.FC = () => {
         throw new Error('No authentication token');
       }
 
-      const response = await fetch('http://127.0.0.1:8000/chat/quiz/answer', {
+      const response = await fetch(apiUrl('chat/quiz/answer'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiUrl } from '../api';
 
 interface LearningPathItem {
   order: number;
@@ -36,7 +37,7 @@ const LearningPathManager: React.FC<LearningPathManagerProps> = ({ onClose }) =>
         return;
       }
 
-      const response = await fetch('http://127.0.0.1:8000/personalization/learning-path', {
+      const response = await fetch(apiUrl('personalization/learning-path'), {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

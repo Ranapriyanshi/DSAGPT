@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ChatFab from './ChatFab';
+import { apiUrl } from '../api';
 
 interface SessionState {
   isPaused: boolean;
@@ -37,7 +38,7 @@ const SessionControls: React.FC<SessionControlsProps> = ({ onClose }) => {
         return;
       }
 
-      const response = await fetch('http://127.0.0.1:8000/personalization/session-state', {
+      const response = await fetch(apiUrl('personalization/session-state'), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -67,7 +68,7 @@ const SessionControls: React.FC<SessionControlsProps> = ({ onClose }) => {
         return;
       }
 
-      const response = await fetch('http://127.0.0.1:8000/personalization/pause-session', {
+      const response = await fetch(apiUrl('personalization/pause-session'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +104,7 @@ const SessionControls: React.FC<SessionControlsProps> = ({ onClose }) => {
         return;
       }
 
-      const response = await fetch(`http://127.0.0.1:8000/personalization/resume-session/${pauseId}`, {
+      const response = await fetch(apiUrl(`personalization/resume-session/${pauseId}`), {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -136,7 +137,7 @@ const SessionControls: React.FC<SessionControlsProps> = ({ onClose }) => {
 
       const newDifficulty = Math.max(0, Math.min(1, sessionState.currentDifficulty + adjustment));
 
-      const response = await fetch('http://127.0.0.1:8000/personalization/update-difficulty', {
+      const response = await fetch(apiUrl('personalization/update-difficulty'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -167,7 +168,7 @@ const SessionControls: React.FC<SessionControlsProps> = ({ onClose }) => {
         return;
       }
 
-      const response = await fetch('http://127.0.0.1:8000/personalization/update-mode', {
+      const response = await fetch(apiUrl('personalization/update-mode'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

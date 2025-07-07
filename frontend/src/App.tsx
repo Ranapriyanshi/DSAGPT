@@ -12,6 +12,7 @@ import SpacedRepetitionManager from './components/SpacedRepetitionManager';
 import PersonalizationPanel from './components/PersonalizationPanel';
 import LearningPathManager from './components/LearningPathManager';
 import ChatFab from './components/ChatFab';
+import { apiUrl } from './api';
 
 // Define a Message type
 interface Message {
@@ -48,7 +49,7 @@ function Login({ setShowLoginModal, setShowRegisterModal }: { setShowLoginModal:
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('http://127.0.0.1:8000/users/login', {
+      const res = await fetch(apiUrl('users/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -134,7 +135,7 @@ function Register({ setShowLoginModal, setShowRegisterModal }: { setShowLoginMod
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('http://127.0.0.1:8000/users/register', {
+      const res = await fetch(apiUrl('users/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, preferred_language: preferredLanguage, dsa_level: dsaLevel })
@@ -242,7 +243,7 @@ function Dashboard({ onOpenSessionControls, onOpenLearningPath }: DashboardProps
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) return;
-    fetch('http://127.0.0.1:8000/users/me', {
+    fetch(apiUrl('users/me'), {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => {
@@ -257,7 +258,7 @@ function Dashboard({ onOpenSessionControls, onOpenLearningPath }: DashboardProps
       .catch(() => { setError('Failed to load user info'); setLoading(false); });
 
     // Fetch user progress from backend
-    fetch('http://127.0.0.1:8000/questions/progress', {
+    fetch(apiUrl('questions/progress'), {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.ok ? res.json() : Promise.reject(res))
@@ -265,7 +266,7 @@ function Dashboard({ onOpenSessionControls, onOpenLearningPath }: DashboardProps
         const attempted = Object.values(data).filter((v: any) => v.attempted).length;
         const solved = Object.values(data).filter((v: any) => v.solved).length;
         // Get total number of questions from backend (for all languages/difficulties)
-        fetch('http://127.0.0.1:8000/questions', { headers: { 'Authorization': `Bearer ${token}` } })
+        fetch(apiUrl('questions'), { headers: { 'Authorization': `Bearer ${token}` } })
           .then(res2 => res2.ok ? res2.json() : Promise.reject(res2))
           .then(allQuestions => {
             const total = allQuestions.length * 3; // 3 languages per question
@@ -629,7 +630,7 @@ function Chat() {
     setInput('');
     setLoading(true);
     // Sentiment analysis (mocked)
-    const sentimentRes = await fetch('http://127.0.0.1:8000/sentiment', {
+    const sentimentRes = await fetch(apiUrl('sentiment'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: input })
@@ -644,7 +645,7 @@ function Chat() {
     } else if (confused) {
       botText = "No worries! Let's try a simpler explanation and more examples. Arrays are like lists of items in order. For example: arr = [1, 2, 3]. Would you like to see a visual or more code samples?";
     } else {
-      const chatRes = await fetch('http://127.0.0.1:8000/gpt-chat', {
+      const chatRes = await fetch(apiUrl('gpt-chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: input })
@@ -765,7 +766,7 @@ function Questions({ onOpenLearningPath }: { onOpenLearningPath?: () => void }) 
   useEffect(() => {
     setLoading(true);
     setError('');
-    fetch(`http://127.0.0.1:8000/questions?difficulty=${difficulty}&language=${encodeURIComponent(language)}`)
+    fetch(apiUrl(`questions?difficulty=${difficulty}&language=${encodeURIComponent(language)}`))
       .then(res => res.ok ? res.json() : Promise.reject(res))
       .then(data => { setQuestions(data); setLoading(false); })
       .catch(() => { setError('Failed to load questions'); setLoading(false); });
@@ -1014,7 +1015,7 @@ function SolveQuestion() {
   useEffect(() => {
     setLoading(true);
     setError('');
-    fetch(`http://127.0.0.1:8000/questions/${id}/summary`)
+    fetch(apiUrl(`questions/${id}/summary`))
       .then(res => res.ok ? res.json() : Promise.reject(res))
       .then(data => {
         setQuestion(data);
@@ -1024,7 +1025,7 @@ function SolveQuestion() {
       .catch(() => { setError('Failed to load question'); setLoading(false); });
     // Fetch user info for personalized chat
     if (token) {
-      fetch('http://127.0.0.1:8000/users/me', {
+      fetch(apiUrl('users/me'), {
         headers: { 'Authorization': `Bearer ${token}` }
       })
         .then(res => res.ok ? res.json() : Promise.reject(res))
@@ -1039,7 +1040,7 @@ function SolveQuestion() {
     setAiLoading(true);
     setAiError('');
     setShowAIDetail(true);
-    fetch('http://127.0.0.1:8000/ai/question-detail', {
+    fetch(apiUrl('ai/question-detail'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title: question.title, description: question.description })
@@ -1259,7 +1260,7 @@ function LoginModal({ onClose, onSuccess, setShowLoginModal, setShowRegisterModa
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('http://127.0.0.1:8000/users/login', {
+      const res = await fetch(apiUrl('users/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -1359,7 +1360,7 @@ function RegisterModal({ onClose, onSuccess, setShowLoginModal, setShowRegisterM
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('http://127.0.0.1:8000/users/register', {
+      const res = await fetch(apiUrl('users/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, preferred_language: preferredLanguage, dsa_level: dsaLevel })
@@ -1841,7 +1842,7 @@ function App() {
   useEffect(() => {
     if (isLoggedIn) {
       const token = localStorage.getItem('token');
-      fetch('http://127.0.0.1:8000/users/me', {
+      fetch(apiUrl('users/me'), {
         headers: { 'Authorization': `Bearer ${token}` }
       })
         .then(res => res.ok ? res.json() : Promise.reject(res))
@@ -2108,7 +2109,7 @@ function PersonalizationWrapper() {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch('http://127.0.0.1:8000/personalization/learning-style', {
+      const response = await fetch(apiUrl('personalization/learning-style'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2131,7 +2132,7 @@ function PersonalizationWrapper() {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch('http://127.0.0.1:8000/personalization/cognitive-profile', {
+      const response = await fetch(apiUrl('personalization/cognitive-profile'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

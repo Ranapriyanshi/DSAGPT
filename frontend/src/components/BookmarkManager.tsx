@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ChatFab from './ChatFab';
+import { apiUrl } from '../api';
 
 interface Bookmark {
   id: number;
@@ -48,7 +49,7 @@ const BookmarkManager: React.FC<BookmarkManagerProps> = ({ onClose }) => {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch('http://127.0.0.1:8000/personalization/bookmarks', {
+      const response = await fetch(apiUrl('personalization/bookmarks'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -68,7 +69,7 @@ const BookmarkManager: React.FC<BookmarkManagerProps> = ({ onClose }) => {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch('http://127.0.0.1:8000/personalization/bookmarks', {
+      const response = await fetch(apiUrl('personalization/bookmarks'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +93,7 @@ const BookmarkManager: React.FC<BookmarkManagerProps> = ({ onClose }) => {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch(`http://127.0.0.1:8000/personalization/bookmarks/${id}`, {
+      const response = await fetch(apiUrl(`personalization/bookmarks/${id}`), {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
