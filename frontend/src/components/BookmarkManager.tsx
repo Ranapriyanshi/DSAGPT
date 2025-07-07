@@ -251,7 +251,7 @@ const BookmarkManager: React.FC<BookmarkManagerProps> = ({ onClose }) => {
 
         {/* Create Bookmark Modal */}
         {showCreateForm && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999]">
             <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-4">Create New Bookmark</h3>
               
@@ -453,6 +453,103 @@ const BookmarkManager: React.FC<BookmarkManagerProps> = ({ onClose }) => {
             </div>
           </div>
       </div>
+
+      {/* Create Bookmark Modal */}
+      {showCreateForm && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999]">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Create New Bookmark</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <input
+                  type="text"
+                  value={newBookmark.title}
+                  onChange={(e) => setNewBookmark(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter bookmark title"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  value={newBookmark.description}
+                  onChange={(e) => setNewBookmark(prev => ({ ...prev, description: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={3}
+                  placeholder="Enter description"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {newBookmark.tags.map(tag => (
+                    <span
+                      key={tag}
+                      className="px-2 py-1 bg-blue-100 text-blue-800 text-sm rounded-full flex items-center gap-1"
+                    >
+                      {tag}
+                      <button
+                        onClick={() => removeTag(tag)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={selectedTags.join('')}
+                    onChange={(e) => setSelectedTags([e.target.value])}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Add tags..."
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addTag(selectedTags[0]);
+                        setSelectedTags([]);
+                      }
+                    }}
+                  />
+                  <button
+                    onClick={() => {
+                      if (selectedTags[0]) {
+                        addTag(selectedTags[0]);
+                        setSelectedTags([]);
+                      }
+                    }}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={() => setShowCreateForm(false)}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={createBookmark}
+                disabled={!newBookmark.title}
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 disabled:opacity-50"
+              >
+                Create Bookmark
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <ChatFab />
     </div>
   );

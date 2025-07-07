@@ -38,8 +38,6 @@ const SpacedRepetitionManager: React.FC = () => {
         return;
       }
 
-      console.log('Fetching spaced repetition topics with token:', token.substring(0, 20) + '...');
-
       const response = await fetch('http://127.0.0.1:8000/personalization/spaced-repetition', {
         method: 'GET',
         headers: {
@@ -47,10 +45,6 @@ const SpacedRepetitionManager: React.FC = () => {
           'Content-Type': 'application/json'
         }
       });
-
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
-
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Response error:', errorText);
