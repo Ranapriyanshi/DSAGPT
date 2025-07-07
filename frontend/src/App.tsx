@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
 import MonacoEditor from '@monaco-editor/react';
 import { marked } from 'marked';
 import mermaid from 'mermaid';
@@ -334,18 +334,18 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Stats Overview */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUpBouncy" style={{ animationDelay: '0.1s' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUpBouncy" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Overall Progress</p>
                   <p className="text-lg font-bold text-blue-600">{progress.percent}%</p>
                 </div>
-                <div className="text-4xl">📈</div>
+                <div className="text-3xl">📈</div>
               </div>
-              <div className="mt-4">
+              <div className="mt-3">
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
                     className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500 ease-out" 
@@ -355,27 +355,27 @@ function Dashboard() {
               </div>
             </div>
             
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUpBouncy" style={{ animationDelay: '0.2s' }}>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUpBouncy" style={{ animationDelay: '0.2s' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Problems Solved</p>
                   <p className="text-lg font-bold text-green-600">{progress.solved}</p>
                 </div>
-                <div className="text-4xl">✅</div>
+                <div className="text-3xl">✅</div>
               </div>
             </div>
             
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUpBouncy" style={{ animationDelay: '0.3s' }}>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUpBouncy" style={{ animationDelay: '0.3s' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Problems Attempted</p>
                   <p className="text-lg font-bold text-purple-600">{progress.attempted}</p>
                 </div>
-                <div className="text-4xl">🎯</div>
+                <div className="text-3xl">🎯</div>
               </div>
             </div>
             
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUpBouncy" style={{ animationDelay: '0.4s' }}>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-white/20 hover:shadow-xl transition-all duration-300 animate-fadeInUpBouncy" style={{ animationDelay: '0.4s' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Success Rate</p>
@@ -383,20 +383,20 @@ function Dashboard() {
                     {progress.attempted > 0 ? Math.round((progress.solved / progress.attempted) * 100) : 0}%
                   </p>
                 </div>
-                <div className="text-4xl">🏆</div>
+                <div className="text-3xl">🏆</div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* User Profile Card */}
             <div className="lg:col-span-1 animate-fadeInUpBouncy" style={{ animationDelay: '0.5s' }}>
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20 hover:shadow-xl transition-all duration-300">
-                <h2 className="text-base font-bold mb-6 flex items-center">
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300">
+                <h2 className="text-base font-bold mb-4 flex items-center">
                   <span className="mr-3 text-lg">👤</span>
                   Your Profile
                 </h2>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div className="flex items-center p-3 bg-blue-50 rounded-lg">
                     <span className="text-blue-600 mr-3">👤</span>
                     <div>
@@ -430,138 +430,138 @@ function Dashboard() {
             </div>
 
             {/* Quick Actions */}
-            <div className="lg:col-span-2 animate-slideInRight" style={{ animationDelay: '0.6s' }}>
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20">
-                <h2 className="text-base font-bold mb-8 flex items-center">
+            <div className="lg:col-span-2 animate-fadeInUpBouncy" style={{ animationDelay: '0.6s' }}>
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20">
+                <h2 className="text-base font-bold mb-6 flex items-center">
                   <span className="mr-3 text-lg">🚀</span>
                   Quick Actions
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <Link
                     to="/chat"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200 hover:border-blue-400 hover:from-blue-100 hover:to-blue-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    className="group p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200 hover:border-blue-400 hover:from-blue-100 hover:to-blue-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                   >
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">💬</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Start Chat</h3>
+                      <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">💬</div>
+                      <h3 className="text-sm font-bold text-gray-900 mb-2">Start Chat</h3>
                       <p className="text-xs text-gray-600">Talk to your AI tutor and get personalized help</p>
                     </div>
                   </Link>
                   
                   <Link
                     to="/questions"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border-2 border-green-200 hover:border-green-400 hover:from-green-100 hover:to-green-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    className="group p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border-2 border-green-200 hover:border-green-400 hover:from-green-100 hover:to-green-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                   >
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">📝</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Practice Problems</h3>
+                      <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">📝</div>
+                      <h3 className="text-sm font-bold text-gray-900 mb-2">Practice Problems</h3>
                       <p className="text-xs text-gray-600">Solve DSA questions and improve your skills</p>
                     </div>
                   </Link>
                   
                   <Link
                     to="/analytics"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border-2 border-purple-200 hover:border-purple-400 hover:from-purple-100 hover:to-purple-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    className="group p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border-2 border-purple-200 hover:border-purple-400 hover:from-purple-100 hover:to-purple-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                   >
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">📊</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">View Analytics</h3>
+                      <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">📊</div>
+                      <h3 className="text-sm font-bold text-gray-900 mb-2">View Analytics</h3>
                       <p className="text-xs text-gray-600">Track your progress and learning insights</p>
                     </div>
                   </Link>
                   
                   <Link
                     to="/bookmarks"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl border-2 border-indigo-200 hover:border-indigo-400 hover:from-indigo-100 hover:to-indigo-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    className="group p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl border-2 border-indigo-200 hover:border-indigo-400 hover:from-indigo-100 hover:to-indigo-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                   >
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🔖</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">My Bookmarks</h3>
+                      <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">🔖</div>
+                      <h3 className="text-sm font-bold text-gray-900 mb-2">My Bookmarks</h3>
                       <p className="text-xs text-gray-600">Access your saved questions and explanations</p>
                     </div>
                   </Link>
                   
                   <Link
                     to="/spaced-repetition"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl border-2 border-teal-200 hover:border-teal-400 hover:from-teal-100 hover:to-teal-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    className="group p-4 bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl border-2 border-teal-200 hover:border-teal-400 hover:from-teal-100 hover:to-teal-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                   >
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🔄</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Spaced Repetition</h3>
+                      <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">🔄</div>
+                      <h3 className="text-sm font-bold text-gray-900 mb-2">Spaced Repetition</h3>
                       <p className="text-xs text-gray-600">Review topics at optimal intervals</p>
                     </div>
                   </Link>
                   
                   <Link
                     to="/session-controls"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl border-2 border-orange-200 hover:border-orange-400 hover:from-orange-100 hover:to-orange-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    className="group p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl border-2 border-orange-200 hover:border-orange-400 hover:from-orange-100 hover:to-orange-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                   >
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">⚙️</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Session Controls</h3>
-                      <p className="text-xs text-gray-600">Adjust difficulty and learning mode</p>
+                      <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">⚙️</div>
+                      <h3 className="text-sm font-bold text-gray-900 mb-2">Session Controls</h3>
+                      <p className="text-xs text-gray-600">Manage your learning session settings</p>
                     </div>
                   </Link>
                   
                   <Link
                     to="/personalization"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl border-2 border-pink-200 hover:border-pink-400 hover:from-pink-100 hover:to-pink-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    className="group p-4 bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl border-2 border-pink-200 hover:border-pink-400 hover:from-pink-100 hover:to-pink-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                   >
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🎨</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Personalization</h3>
+                      <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">🎨</div>
+                      <h3 className="text-sm font-bold text-gray-900 mb-2">Personalization</h3>
                       <p className="text-xs text-gray-600">Customize your learning experience</p>
                     </div>
                   </Link>
                   
                   <Link
                     to="/learning-path"
-                    className="group p-6 lg:p-8 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl border-2 border-emerald-200 hover:border-emerald-400 hover:from-emerald-100 hover:to-emerald-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    className="group p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl border-2 border-yellow-200 hover:border-yellow-400 hover:from-yellow-100 hover:to-yellow-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                   >
                     <div className="text-center">
-                      <div className="text-2xl lg:text-3xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform">🗺️</div>
-                      <h3 className="text-sm lg:text-base font-bold text-gray-900 mb-2">Learning Path</h3>
-                      <p className="text-xs text-gray-600">Follow your personalized roadmap</p>
+                      <div className="text-2xl mb-3 group-hover:scale-110 transition-transform">🗺️</div>
+                      <h3 className="text-sm font-bold text-gray-900 mb-2">Learning Path</h3>
+                      <p className="text-xs text-gray-600">Follow your personalized learning journey</p>
                     </div>
                   </Link>
                 </div>
               </div>
             </div>
           </div>
-          
-          {/* Motivational Section */}
-          <div className="mt-12 animate-fadeInUp" style={{ animationDelay: '0.8s' }}>
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
-              {/* Background decorative elements */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
-              
-              <div className="relative z-10">
-                <div className="text-center">
-                  <div className="text-3xl mb-4">🚀</div>
-                  <h2 className="text-lg font-bold mb-4">Ready to Level Up?</h2>
-                  <p className="text-sm text-blue-100 mb-6 max-w-2xl mx-auto">
-                    {progress.percent < 30 ? 
-                      "You're just getting started! Let's build a strong foundation together." :
-                      progress.percent < 70 ? 
-                      "Great progress! You're well on your way to becoming a DSA expert." :
-                      "Amazing work! You're almost there. Keep pushing forward!"
-                    }
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Link
-                      to="/questions"
-                      className="px-4 py-2 bg-white text-blue-600 rounded-xl font-semibold text-sm hover:bg-blue-50 transition-all duration-200 transform hover:scale-105 shadow-lg"
-                    >
-                      Start Practicing
-                    </Link>
-                    <Link
-                      to="/chat"
-                      className="px-4 py-2 border-2 border-white text-white rounded-xl font-semibold text-sm hover:bg-white hover:text-blue-600 transition-all duration-200"
-                    >
-                      Ask AI Tutor
-                    </Link>
-                  </div>
+        </div>
+        
+        {/* Motivational Section */}
+        <div className="mt-12 animate-fadeInUp" style={{ animationDelay: '0.8s' }}>
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
+            {/* Background decorative elements */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+            
+            <div className="relative z-10">
+              <div className="text-center">
+                <div className="text-3xl mb-4">🚀</div>
+                <h2 className="text-lg font-bold mb-4">Ready to Level Up?</h2>
+                <p className="text-sm text-blue-100 mb-6 max-w-lg mx-auto">
+                  {progress.percent < 30 ? 
+                    "You're just getting started! Let's build a strong foundation together." :
+                    progress.percent < 70 ? 
+                    "Great progress! You're well on your way to becoming a DSA expert." :
+                    "Amazing work! You're almost there. Keep pushing forward!"
+                  }
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link
+                    to="/questions"
+                    className="px-4 py-2 bg-white text-blue-600 rounded-xl font-semibold text-sm hover:bg-blue-50 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                  >
+                    Start Practicing
+                  </Link>
+                  <Link
+                    to="/chat"
+                    className="px-4 py-2 border-2 border-white text-white rounded-xl font-semibold text-sm hover:bg-white hover:text-blue-600 transition-all duration-200"
+                  >
+                    Ask AI Tutor
+                  </Link>
                 </div>
               </div>
             </div>
@@ -809,7 +809,7 @@ function Questions() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Filters Section */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20 mb-8 animate-fadeInUp">
             <h2 className="text-base font-bold mb-6 flex items-center">
@@ -1283,6 +1283,8 @@ function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: ()
         <input 
           className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
           type="email" 
+          name="email"
+          id="login-email"
           placeholder="Email" 
           value={email} 
           onChange={e => setEmail(e.target.value)} 
@@ -1291,6 +1293,8 @@ function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: ()
         <input 
           className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
           type="password" 
+          name="password"
+          id="login-password"
           placeholder="Password" 
           value={password} 
           onChange={e => setPassword(e.target.value)} 
@@ -1374,6 +1378,8 @@ function RegisterModal({ onClose, onSuccess }: { onClose: () => void; onSuccess:
         <input 
           className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
           type="text" 
+          name="name"
+          id="register-name"
           placeholder="Full Name" 
           value={name} 
           onChange={e => setName(e.target.value)} 
@@ -1382,6 +1388,8 @@ function RegisterModal({ onClose, onSuccess }: { onClose: () => void; onSuccess:
         <input 
           className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
           type="email" 
+          name="email"
+          id="register-email"
           placeholder="Email" 
           value={email} 
           onChange={e => setEmail(e.target.value)} 
@@ -1390,6 +1398,8 @@ function RegisterModal({ onClose, onSuccess }: { onClose: () => void; onSuccess:
         <input 
           className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
           type="password" 
+          name="password"
+          id="register-password"
           placeholder="Password" 
           value={password} 
           onChange={e => setPassword(e.target.value)} 
@@ -1397,6 +1407,8 @@ function RegisterModal({ onClose, onSuccess }: { onClose: () => void; onSuccess:
         />
         <select 
           className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
+          name="preferred_language"
+          id="register-preferred-language"
           value={preferredLanguage} 
           onChange={e => setPreferredLanguage(e.target.value)}
         >
@@ -1406,6 +1418,8 @@ function RegisterModal({ onClose, onSuccess }: { onClose: () => void; onSuccess:
         </select>
         <select 
           className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm" 
+          name="dsa_level"
+          id="register-dsa-level"
           value={dsaLevel} 
           onChange={e => setDsaLevel(e.target.value)}
         >
@@ -1739,12 +1753,60 @@ function LandingPage({
   );
 }
 
+// Active link component
+function NavLink({ item, sidebarCollapsed, onClick }: { 
+  item: { path: string; label: string; icon: string }; 
+  sidebarCollapsed: boolean; 
+  onClick: () => void;
+}) {
+  const location = useLocation();
+  const isActive = location.pathname === item.path;
+  
+  return (
+    <Link
+      to={item.path}
+      className={`flex items-center px-3 py-2 rounded-lg transition-all duration-200 group ${
+        sidebarCollapsed ? 'justify-center' : 'space-x-3'
+      } ${
+        isActive 
+          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg' 
+          : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400'
+      }`}
+      onClick={onClick}
+      title={sidebarCollapsed ? item.label : undefined}
+    >
+      <span className={`text-lg transition-transform duration-200 ${
+        isActive ? '' : 'group-hover:scale-110'
+      }`}>
+        {item.icon}
+      </span>
+      {!sidebarCollapsed && (
+        <span className="font-medium">{item.label}</span>
+      )}
+    </Link>
+  );
+}
+
 function App() {
   const isLoggedIn = !!localStorage.getItem('token');
-  const [navOpen, setNavOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  // Fetch user data when logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      const token = localStorage.getItem('token');
+      fetch('http://127.0.0.1:8000/users/me', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+        .then(res => res.ok ? res.json() : Promise.reject(res))
+        .then(data => setUser(data))
+        .catch(() => setUser(null));
+    }
+  }, [isLoggedIn]);
 
   // Prevent body scrolling when modals are open
   useEffect(() => {
@@ -1760,200 +1822,215 @@ function App() {
     };
   }, [showLoginModal, showRegisterModal]);
 
+  // Sidebar navigation items
+  const navItems = [
+    { path: '/dashboard', label: 'Dashboard', icon: '🏠' },
+    { path: '/chat', label: 'AI Tutor', icon: '💬' },
+    { path: '/questions', label: 'Practice Problems', icon: '📝' },
+    { path: '/analytics', label: 'Analytics', icon: '📊' },
+    { path: '/bookmarks', label: 'Bookmarks', icon: '🔖' },
+    { path: '/spaced-repetition', label: 'Spaced Repetition', icon: '🔄' },
+    { path: '/session-controls', label: 'Session Controls', icon: '⚙️' },
+    { path: '/personalization', label: 'Personalization', icon: '🎨' },
+    { path: '/learning-path', label: 'Learning Path', icon: '🗺️' },
+  ];
 
   return (
     <Router>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-white">
-        <nav className="bg-blue-600 dark:bg-gray-800 text-white px-4 py-3 shadow flex items-center justify-between relative">
-          <div className="text-2xl font-bold">
-            <Link to={isLoggedIn ? "/dashboard" : "/"}>DSA-GPT</Link>
-          </div>
-          {/* Hamburger for mobile */}
-          <button
-            className="md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-white"
-            onClick={() => setNavOpen(!navOpen)}
-            aria-label={navOpen ? "Close navigation menu" : "Open navigation menu"}
-          >
-            {navOpen ? (
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M6 18L18 6" />
-              </svg>
-            ) : (
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
-          </button>
-          {/* Nav links - desktop */}
-          <div className="space-x-4 hidden md:flex items-center">
-            {isLoggedIn ? (
-              <>
-                <Link to="/questions" className="hover:underline">Questions</Link>
-                <Link to="/analytics" className="hover:underline">Analytics</Link>
-                <div className="relative profile-dropdown">
-                  <button 
-                    onMouseEnter={() => setShowProfileDropdown(true)}
-                    onMouseLeave={() => setShowProfileDropdown(false)}
-                    className="flex items-center space-x-2 px-4 py-2 border border-white rounded-full bg-white text-blue-600 transition-all duration-200"
-                  >
-                    <span className="text-xl">👩🏼‍🦰</span>
-                    <span>Profile</span>
-                  </button>
-                  {showProfileDropdown && (
-                    <>
-                      {/* Invisible bridge to prevent gap */}
-                      <div 
-                        className="absolute top-full right-0 w-48 h-2 bg-transparent"
-                        onMouseEnter={() => setShowProfileDropdown(true)}
-                        onMouseLeave={() => setShowProfileDropdown(false)}
-                      />
-                      <div 
-                        className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
-                        onMouseEnter={() => setShowProfileDropdown(true)}
-                        onMouseLeave={() => setShowProfileDropdown(false)}
-                      >
-                        <div className="py-2">
-                          <Link 
-                            to="/dashboard" 
-                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
-                            onClick={() => setShowProfileDropdown(false)}
-                          >
-                            Dashboard
-                          </Link>
-                          <Link 
-                            to="/chat" 
-                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
-                            onClick={() => setShowProfileDropdown(false)}
-                          >
-                            Chat
-                          </Link>
-                          <Link 
-                            to="/analytics" 
-                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
-                            onClick={() => setShowProfileDropdown(false)}
-                          >
-                            Analytics
-                          </Link>
-                          <Link 
-                            to="/bookmarks" 
-                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
-                            onClick={() => setShowProfileDropdown(false)}
-                          >
-                            Bookmarks
-                          </Link>
-                          <Link 
-                            to="/spaced-repetition" 
-                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
-                            onClick={() => setShowProfileDropdown(false)}
-                          >
-                            Spaced Repetition
-                          </Link>
-                          <Link 
-                            to="/session-controls" 
-                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
-                            onClick={() => setShowProfileDropdown(false)}
-                          >
-                            Session Controls
-                          </Link>
-                          <Link 
-                            to="/personalization" 
-                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
-                            onClick={() => setShowProfileDropdown(false)}
-                          >
-                            Personalization
-                          </Link>
-                          <Link 
-                            to="/learning-path" 
-                            className="block px-4 py-2 text-gray-800 hover:bg-blue-50 transition-colors"
-                            onClick={() => setShowProfileDropdown(false)}
-                          >
-                            Learning Path
-                          </Link>
-                          <hr className="my-2 border-gray-200" />
-                          <button 
-                            className=" text-left px-5 py-3 text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-semibold rounded mx-2"
-                            onClick={() => { 
-                              localStorage.removeItem('token'); 
-                              window.location.href = '/'; 
-                              setShowProfileDropdown(false);
-                            }}
-                          >
-                            Logout
-                          </button>
-                        </div>
+        {isLoggedIn ? (
+          // Logged in layout with sidebar
+          <div className="flex h-screen">
+            {/* Sidebar */}
+            <div className={`fixed inset-y-0 left-0 z-50 h-screen bg-white dark:bg-gray-800 shadow-xl transform transition-all duration-300 ease-in-out ${
+              sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            } lg:translate-x-0 lg:static lg:inset-0 ${
+              sidebarCollapsed ? 'w-14' : 'w-56'
+            }`}>
+              <div className="flex flex-col h-full">
+                {/* Sidebar Header */}
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  {!sidebarCollapsed ? (
+                    <Link to="/dashboard" className="text-xl font-bold text-blue-600 dark:text-blue-400 block mb-3">
+                      DSA-GPT
+                    </Link>
+                  ) : (
+                    <Link to="/dashboard" className="block mb-3">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <span className="text-white font-bold text-sm">D</span>
                       </div>
-                    </>
+                    </Link>
                   )}
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                      className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center space-x-2"
+                      title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                          d={sidebarCollapsed ? "M13 5l7 7-7 7M5 5l7 7-7 7" : "M11 19l-7-7 7-7M19 19l-7-7 7-7"} />
+                      </svg>
+                      {!sidebarCollapsed && (
+                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Collapse</span>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setSidebarOpen(false)}
+                      className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <ThemeToggle />
-              </>
-            ) : (
-              <>
-                <button onClick={() => setShowRegisterModal(true)} className="hover:underline bg-transparent border-none text-white cursor-pointer">Register</button>
-                <button onClick={() => setShowLoginModal(true)} className="px-4 py-2 border border-white rounded-full text-white hover:bg-white hover:text-blue-600 transition-all duration-200">Login</button>
-                <ThemeToggle />
-              </>
-            )}
-          </div>
-          {/* Nav links - mobile dropdown */}
-          {navOpen && (
-            <div className="absolute top-full right-0 left-0 bg-blue-700 text-white flex flex-col items-start p-4 z-50 md:hidden animate-fadeInDown">
-              {isLoggedIn && <Link to="/questions" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Questions</Link>}
-              {isLoggedIn ? (
-                <>
-                  <Link to="/dashboard" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Dashboard</Link>
-                  <Link to="/chat" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Chat</Link>
-                  <Link to="/analytics" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Analytics</Link>
-                  <Link to="/bookmarks" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Bookmarks</Link>
-                  <Link to="/spaced-repetition" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Spaced Repetition</Link>
-                  <Link to="/session-controls" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Session Controls</Link>
-                  <Link to="/personalization" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Personalization</Link>
-                  <Link to="/learning-path" className="py-2 w-full hover:underline" onClick={() => setNavOpen(false)}>Learning Path</Link>
-                  <button className="py-2 w-full text-left bg-white text-blue-600 rounded font-semibold shadow hover:bg-blue-100 transition" onClick={() => { localStorage.removeItem('token'); window.location.href = '/'; }}>Logout</button>
-                </>
-              ) : (
-                <>
-                  <button onClick={() => { setShowLoginModal(true); setNavOpen(false); }} className="py-2 w-full hover:underline bg-transparent border-none text-white cursor-pointer text-left">Login</button>
-                  <button onClick={() => { setShowRegisterModal(true); setNavOpen(false); }} className="py-2 w-full hover:underline bg-transparent border-none text-white cursor-pointer text-left">Register</button>
-                </>
-              )}
-            </div>
-          )}
-        </nav>
-        
-        <main className="w-full">
-          <Routes>
-            <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" />} />
-            <Route path="/chat" element={isLoggedIn ? <EmotionAwareChat /> : <Navigate to="/" />} />
-            <Route path="/questions" element={isLoggedIn ? <Questions /> : <Navigate to="/" />} />
-            <Route path="/questions/:id/solve" element={isLoggedIn ? <SolveQuestion /> : <Navigate to="/" />} />
-            <Route path="/analytics" element={isLoggedIn ? <AnalyticsDashboard /> : <Navigate to="/" />} />
-            <Route path="/bookmarks" element={isLoggedIn ? <BookmarkManager /> : <Navigate to="/" />} />
-            <Route path="/spaced-repetition" element={isLoggedIn ? <SpacedRepetitionManager /> : <Navigate to="/" />} />
-            <Route path="/session-controls" element={isLoggedIn ? <SessionControls /> : <Navigate to="/" />} />
-            <Route path="/personalization" element={isLoggedIn ? <PersonalizationWrapper /> : <Navigate to="/" />} />
-            <Route path="/learning-path" element={isLoggedIn ? <LearningPathManager /> : <Navigate to="/" />} />
-            <Route path="/" element={isLoggedIn ? <Navigate to="/dashboard" /> : <LandingPage showLoginModal={showLoginModal} setShowLoginModal={setShowLoginModal} showRegisterModal={showRegisterModal} setShowRegisterModal={setShowRegisterModal} />} />
-          </Routes>
-        </main>
 
-        {/* Login Modal */}
-        {showLoginModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <LoginModal onClose={() => setShowLoginModal(false)} onSuccess={() => {
-              setShowLoginModal(false);
-              window.location.href = '/dashboard';
-            }} />
+                {/* Navigation Items */}
+                <nav className="flex-1 px-2 py-3 space-y-1 overflow-y-auto">
+                  {navItems.map((item) => (
+                    <NavLink
+                      key={item.path}
+                      item={item}
+                      sidebarCollapsed={sidebarCollapsed}
+                      onClick={() => setSidebarOpen(false)}
+                    />
+                  ))}
+                </nav>
+
+                {/* Sidebar Footer */}
+                <div className="p-2 border-t border-gray-200 dark:border-gray-700 space-y-2">
+                  {/* Theme Toggle */}
+                  <div className={`flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg ${
+                    sidebarCollapsed ? 'justify-center' : 'justify-between'
+                  }`}>
+                    {!sidebarCollapsed && (
+                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Theme</span>
+                    )}
+                    <ThemeToggle />
+                  </div>
+
+                  {/* Logout Button */}
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem('token');
+                      window.location.href = '/';
+                    }}
+                    className={`w-full flex items-center px-3 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 font-medium ${
+                      sidebarCollapsed ? 'justify-center' : 'justify-center space-x-2'
+                    }`}
+                    title={sidebarCollapsed ? "Logout" : undefined}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    {!sidebarCollapsed && <span className="text-sm">Logout</span>}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile overlay */}
+            {sidebarOpen && (
+              <div
+                className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+                onClick={() => setSidebarOpen(false)}
+              />
+            )}
+
+            {/* Main Content */}
+            <div className="flex-1 flex flex-col lg:ml-0 overflow-hidden">
+              {/* Top bar for mobile */}
+              <div className="lg:hidden bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between px-4 py-3">
+                  <button
+                    onClick={() => setSidebarOpen(true)}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                  </button>
+                  <Link to="/dashboard" className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                    DSA-GPT
+                  </Link>
+                  <div className="w-10"></div> {/* Spacer for centering */}
+                </div>
+              </div>
+
+              {/* Page Content */}
+              <main className="flex-1 overflow-y-auto">
+                <Routes>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/chat" element={<EmotionAwareChat />} />
+                  <Route path="/questions" element={<Questions />} />
+                  <Route path="/questions/:id/solve" element={<SolveQuestion />} />
+                  <Route path="/analytics" element={<AnalyticsDashboard />} />
+                  <Route path="/bookmarks" element={<BookmarkManager />} />
+                  <Route path="/spaced-repetition" element={<SpacedRepetitionManager />} />
+                  <Route path="/session-controls" element={<SessionControls />} />
+                  <Route path="/personalization" element={<PersonalizationWrapper />} />
+                  <Route path="/learning-path" element={<LearningPathManager />} />
+                  <Route path="/" element={<Navigate to="/dashboard" />} />
+                </Routes>
+              </main>
+            </div>
           </div>
+        ) : (
+          // Non-logged in layout with top navbar
+          <>
+            <nav className="bg-blue-600 dark:bg-gray-800 text-white px-4 py-3 shadow flex items-center justify-between">
+              <div className="text-2xl font-bold">
+                <Link to="/">DSA-GPT</Link>
+              </div>
+              <div className="flex items-center space-x-4">
+                <button onClick={() => setShowRegisterModal(true)} className="hover:underline bg-transparent border-none text-white cursor-pointer">
+                  Register
+                </button>
+                <button onClick={() => setShowLoginModal(true)} className="px-4 py-2 border border-white rounded-full text-white hover:bg-white hover:text-blue-600 transition-all duration-200">
+                  Login
+                </button>
+                <ThemeToggle />
+              </div>
+            </nav>
+            
+            <main className="w-full">
+              <Routes>
+                <Route path="/" element={
+                  <LandingPage 
+                    showLoginModal={showLoginModal} 
+                    setShowLoginModal={setShowLoginModal} 
+                    showRegisterModal={showRegisterModal} 
+                    setShowRegisterModal={setShowRegisterModal} 
+                  />
+                } />
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+            </main>
+          </>
         )}
 
-        {/* Register Modal */}
+        {/* Modals */}
+        {showLoginModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <LoginModal
+              onClose={() => setShowLoginModal(false)}
+              onSuccess={() => {
+                setShowLoginModal(false);
+                window.location.reload();
+              }}
+            />
+          </div>
+        )}
         {showRegisterModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <RegisterModal onClose={() => setShowRegisterModal(false)} onSuccess={() => {
-              setShowRegisterModal(false);
-              setShowLoginModal(true);
-            }} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <RegisterModal
+              onClose={() => setShowRegisterModal(false)}
+              onSuccess={() => {
+                setShowRegisterModal(false);
+                window.location.reload();
+              }}
+            />
           </div>
         )}
       </div>
