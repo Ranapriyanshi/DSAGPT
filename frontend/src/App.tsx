@@ -766,7 +766,7 @@ function Questions({ onOpenLearningPath }: { onOpenLearningPath?: () => void }) 
   useEffect(() => {
     setLoading(true);
     setError('');
-    fetch(apiUrl(`questions?difficulty=${difficulty}&language=${encodeURIComponent(language)}`))
+    fetch(apiUrl(`questions/?difficulty=${difficulty}&language=${encodeURIComponent(language)}`))
       .then(res => res.ok ? res.json() : Promise.reject(res))
       .then(data => { setQuestions(data); setLoading(false); })
       .catch(() => { setError('Failed to load questions'); setLoading(false); });
