@@ -1,7 +1,8 @@
 # DSA-GPT: An Emotion-Aware Intelligent Tutoring System
 
 <img src="https://drive.google.com/uc?export=view&id=1Ru_zvFGL8bp9lYG3kxzwQ69mgMF7efyh" width="370">
-> **Master Data Structures & Algorithms with AI-Powered, Emotion-Aware Tutoring**
+
+**Master Data Structures & Algorithms with AI-Powered, Emotion-Aware Tutoring**
 
 [![React](https://img.shields.io/badge/React-18.0-blue.svg)](https://reactjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green.svg)](https://fastapi.tiangolo.com/)
