@@ -1,19 +1,12 @@
 # DSA-GPT: An Emotion-Aware Intelligent Tutoring System
+## Master Data Structures & Algorithms with AI-Powered, Emotion-Aware Tutoring
+![React](https://img.shields.io/badge/React-18.0-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green.svg)
+![OpenAI GPT](https://img.shields.io/badge/OpenAI-GPT--3.5--turbo-purple.svg)
+![VADER](https://img.shields.io/badge/VADER-Sentiment-orange.svg)
 
-<table>
-  <tr>
-    <td width="60%" valign="top">
-      ## Master Data Structures & Algorithms with AI-Powered, Emotion-Aware Tutoring
-      ![React](https://img.shields.io/badge/React-18.0-blue.svg)
-      ![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green.svg)
-      ![OpenAI GPT](https://img.shields.io/badge/OpenAI-GPT--3.5--turbo-purple.svg)
-      ![VADER](https://img.shields.io/badge/VADER-Sentiment-orange.svg)
-    </td>
-    <td width="40%" align="right">
-      <img src="https://drive.google.com/uc?export=view&id=1Ru_zvFGL8bp9lYG3kxzwQ69mgMF7efyh" width="370">
-    </td>
-  </tr>
-</table>
+<img src="https://drive.google.com/uc?export=view&id=1Ru_zvFGL8bp9lYG3kxzwQ69mgMF7efyh" width="370">
+
 ## 🎯 **Overview**
 
 DSA-GPT is an innovative intelligent tutoring system that combines the power of Large Language Models (GPT-3.5) with real-time sentiment analysis (VADER) to provide personalized, emotion-aware learning experiences for Data Structures and Algorithms.
